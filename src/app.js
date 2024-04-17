@@ -1,12 +1,9 @@
 import express from 'express';
 import ProductManager from './ProductManager.js';
 
-/// Paso 2: instanciar el servidor
 const app = express();
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 const manager = new ProductManager();
 
 app.get('/', (req, res) => {
@@ -29,11 +26,10 @@ app.get('/products/:pid', async (req, res) => {
     if(product.code !== undefined) {
         res.status(200).send({ status: 'Ok', payload: product });
     } else {
-        res.status(400).send({ status: 'Not Ok', payload: [] });
+        res.status(400).send({ status: 'Not Ok', payload: [], error: 'El producto buscado no existe.' });
     }
 });
 
-// Paso 4: poner a escuchar el servidor
 app.listen(8080, () => {
     console.log('Servidor Express activo en puerto 8080');
 });
