@@ -131,10 +131,10 @@
     "title": "producto Nuevo Post",
     "description": "Este es un producto agregado con Post",
     "price": 230,
-    "code": "qqq123",
+    "code": "qqq12345",
     "stock": 25,
     "category": "clase A",
-    "id": 15,
+    "id": 16,
     "status": true,
     "thumbnail": []
   }
