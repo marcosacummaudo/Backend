@@ -106,5 +106,36 @@
     "thumbnail": "Sin imagen",
     "code": "ggg789",
     "stock": 53
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "thumbnail": "Sin imagen",
+    "code": "yyy123",
+    "stock": 25,
+    "id": 13
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "thumbnail": [
+      "Sin imagen"
+    ],
+    "code": "zzz123",
+    "stock": 25,
+    "id": 14
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "qqq123",
+    "stock": 25,
+    "category": "clase A",
+    "id": 15,
+    "status": true,
+    "thumbnail": []
   }
 ]

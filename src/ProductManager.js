@@ -5,31 +5,23 @@ class ProductManager {
         this.path = './src/products.json';
     }
 
-    async addProduct(title, description, price, thumbnail, code, stock) {
+    async addProduct(prodAdd) {
         try {
-            if (!title || !description || !price || !thumbnail || !code || !stock) {
-                console.log("Todos los campos son obligatorios.");
-                return;
+            if (!prodAdd.title || !prodAdd.description || !prodAdd.price || !prodAdd.code || !prodAdd.stock || !prodAdd.category) {
+                return 0;
             } else {
                 const products = await this.getProductsFromFile();
-    
-                if (products.some(product => product.code === code)) {
-                        console.log(`El código ${code} de producto ya existe.`);
-                        return;
+                if (products.some(product => product.code === prodAdd.code)) {
+                    return 1;
                 } else {
-                    const product = {
-                        id: 0,
-                        title: title,
-                        description: description,
-                        price: price,
-                        thumbnail: thumbnail,
-                        code: code,
-                        stock: stock
+                    prodAdd.id = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                    prodAdd.status = true;
+                    if (prodAdd.thumbnail === undefined) {
+                        prodAdd.thumbnail = [];
                     };
-                    product.id = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                    products.push(product);
+                    products.push(prodAdd);
                     await this.saveProductsToFile(products);
-                    console.log(`Producto con código ${code}, agregado OK`);
+                    return 2;
                 }
             }
         } catch (error) {
@@ -40,19 +32,16 @@ class ProductManager {
 
     async getProducts(limit) {
         try {
-           
             if(!fs.existsSync(this.path)) {
-                console.log('El archivo no existe');
                 return;
             } else {
                 const products = await this.getProductsFromFile();
                 if (products.length === 0) {
-                    console.log('El archivo esta vacio')
+                    return //console.log('El archivo esta vacio')
                 } else {
                     return limit === 0 ? products : products.slice(0, limit);
                 }
             }
-
         } catch (error) {
             console.log('Error al mostrar los productos.');
             console.log(error);
@@ -78,20 +67,19 @@ class ProductManager {
         try {
             const products = await this.getProductsFromFile();
             const index = products.findIndex(product => product.id === id);
-            console.log('indice:', index);
-            console.log('title:', prodU.title);
             if (index !== -1) {
-                console.log('objeto encontrado:', products[index]);
                 products[index].title = prodU.title;
                 products[index].description = prodU.description;
                 products[index].price = prodU.price;
                 products[index].thumbnail = prodU.thumbnail;
                 products[index].code = prodU.code;
                 products[index].stock = prodU.stock;
+                products[index].status = prodU.status;
+                products[index].category = prodU.category;
                 await this.saveProductsToFile(products);
-                console.log(`El producto con id ${id} fue modificado.`, products[index]);
+                return 0;
             } else {
-                console.log(`No se encontro el producto con id ${id} para ser editado.`)
+                return 1;
             }
         } catch (error) {
             console.log('Error al intentar actualizar el producto por su id.');
@@ -104,11 +92,11 @@ class ProductManager {
             const products = await this.getProductsFromFile();
             const prod = products.find(prod => prod.id === id);
             if (prod === undefined) {
-                console.log(`Producto con id ${id} no existe, por lo tanto no se puede borrar.`)
+                return 0
             } else {
                 const productsFilter = products.filter(product => product.id !== id);
                 await this.saveProductsToFile(productsFilter);
-                console.log(`Se borro el producto con id ${id}. Productos restantes:`, productsFilter);
+                return 1
             }
         } catch (error) {
             console.log('Error al intentar borrar el producto por su id.');
