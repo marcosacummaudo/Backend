@@ -1,0 +1,9 @@
+<div class="productos">
+    <h1>Listado de productos:</h1>
+
+    <ul class="list-group list-group-flush col-6 p-2">
+        {{#each products}}
+            <li class="list-group-item">Id: {{id}} | Nombre: {{title}} | Precio: ${{price}} {{#if status}} (Activo) {{/if}}</li>
+        {{/each}}
+    </ul>
+</div>

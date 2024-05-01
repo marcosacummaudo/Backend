@@ -30,9 +30,9 @@ router.get('/:pid', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    const socketServer = req.app.get('socketServer');
     const prodAdd = req.body;
     const rta = await manager.addProduct(prodAdd);
-
     if (rta !== 2) {
         if (rta === 0) {
             res.status(400).send({ status: 'Not Ok', payload: [], error: 'Todos los campos son obligatorios.' });
@@ -41,6 +41,7 @@ router.post('/', async (req, res) => {
         }
     } else {
         res.status(200).send({ status: 'Ok', payload: prodAdd, mensaje: `Producto con código ${prodAdd.code}, agregado OK` });
+        socketServer.emit('newProduct', prodAdd);
     }
 });
 
@@ -60,6 +61,7 @@ router.put('/:pid', async (req, res) => {
 });
 
 router.delete('/:pid', async (req, res) => {
+    const socketServer = req.app.get('socketServer');
     const pid = +req.params.pid;
     if (pid <= 0 || isNaN(pid)) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `Se requiere id numérico mayor a 0.` });
@@ -67,6 +69,8 @@ router.delete('/:pid', async (req, res) => {
         const rta = await manager.deleteProduct(pid);
         if (rta === 1) {
             res.status(200).send({ status: 'Ok', payload: [], mensaje: `Producto con id ${pid}, fue borrado.` });
+            const prodRender = await manager.getProducts(0);
+            socketServer.emit('deleteProduct', prodRender);
         } else {
             res.status(400).send({ status: 'Not Ok', payload: [], error: `No se encontro el producto con id ${pid} para ser borrado.` });
         };

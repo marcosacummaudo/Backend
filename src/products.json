@@ -6,6 +6,7 @@
     "price": 150,
     "thumbnail": "Con imagen",
     "code": "zzz999",
+    "status": true,
     "stock": 5
   },
   {
@@ -15,6 +16,7 @@
     "price": 240,
     "thumbnail": "Sin imagen",
     "code": "abc123",
+    "status": false,
     "stock": 25
   },
   {
@@ -24,6 +26,7 @@
     "price": 280,
     "thumbnail": "Sin imagen",
     "code": "abc456",
+    "status": true,
     "stock": 25
   },
   {
@@ -33,6 +36,7 @@
     "price": 500,
     "thumbnail": "Sin imagen",
     "code": "abc789",
+    "status": true,
     "stock": 50
   },
   {
@@ -42,6 +46,7 @@
     "price": 700,
     "thumbnail": "Sin imagen",
     "code": "aaa123",
+    "status": true,
     "stock": 26
   },
   {
@@ -51,6 +56,7 @@
     "price": 99,
     "thumbnail": "Sin imagen",
     "code": "bbb456",
+    "status": true,
     "stock": 77
   },
   {
@@ -60,6 +66,7 @@
     "price": 120,
     "thumbnail": "Sin imagen",
     "code": "ccc456",
+    "status": false,
     "stock": 43
   },
   {
@@ -69,6 +76,7 @@
     "price": 150,
     "thumbnail": "Sin imagen",
     "code": "ddd456",
+    "status": true,
     "stock": 12
   },
   {
@@ -78,6 +86,7 @@
     "price": 250,
     "thumbnail": "Sin imagen",
     "code": "abc456",
+    "status": true,
     "stock": 66
   },
   {
@@ -87,6 +96,7 @@
     "price": 460,
     "thumbnail": "Sin imagen",
     "code": "eee789",
+    "status": true,
     "stock": 27
   },
   {
@@ -96,6 +106,7 @@
     "price": 465,
     "thumbnail": "Sin imagen",
     "code": "fff789",
+    "status": true,
     "stock": 18
   },
   {
@@ -105,6 +116,7 @@
     "price": 464,
     "thumbnail": "Sin imagen",
     "code": "ggg789",
+    "status": true,
     "stock": 53
   },
   {
@@ -114,6 +126,7 @@
     "thumbnail": "Sin imagen",
     "code": "yyy123",
     "stock": 25,
+    "status": true,
     "id": 13
   },
   {
@@ -125,6 +138,7 @@
     ],
     "code": "zzz123",
     "stock": 25,
+    "status": true,
     "id": 14
   },
   {
@@ -135,6 +149,116 @@
     "stock": 25,
     "category": "clase A",
     "id": 16,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "rrrr12345",
+    "stock": 25,
+    "category": "clase A",
+    "id": 17,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "rrrr123",
+    "stock": 25,
+    "category": "clase A",
+    "id": 18,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "asdasd123",
+    "stock": 25,
+    "category": "clase A",
+    "id": 19,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "asdasd12345",
+    "stock": 25,
+    "category": "clase A",
+    "id": 20,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Post",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "ad12345",
+    "stock": 25,
+    "category": "clase A",
+    "id": 21,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Render",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "apppppd12345",
+    "stock": 25,
+    "category": "clase A",
+    "id": 22,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Render",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "appd9876",
+    "stock": 25,
+    "category": "clase A",
+    "id": 23,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Render",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "appd09234",
+    "stock": 25,
+    "category": "clase A",
+    "id": 24,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Render",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "appd4434",
+    "stock": 25,
+    "category": "clase A",
+    "id": 25,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "producto Nuevo Render",
+    "description": "Este es un producto agregado con Post",
+    "price": 230,
+    "code": "appd4ttt434",
+    "stock": 25,
+    "category": "clase A",
+    "id": 26,
     "status": true,
     "thumbnail": []
   }
