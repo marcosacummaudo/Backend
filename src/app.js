@@ -35,7 +35,6 @@ app.set('socketServer', socketServer);
 
 //Escucho a un cliente
 socketServer.on('connection', async (client) => {
-    //let prodRender = [];
     const manager = new ProductManager();
     const products = await manager.getProducts(0);
     console.log('Cliente conectado!!!');

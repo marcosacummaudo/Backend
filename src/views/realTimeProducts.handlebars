@@ -1,46 +1,54 @@
 <main class="container">
     <div class="row">
-
-
-    <div class="productos col">
-        <h1>Listado de productos: (En tiempo real) </h1>
-        <div>
-            <ul class="list-group list-group-flush p-2">
-                <li id="listProd" class="list-group-item"></li>
-            </ul>
+        <div class="productos col">
+            <h2>Listado de productos: (En tiempo real) </h2>
+            <div>
+                <ul class="list-group list-group-flush p-2">
+                    <li id="listProd" class="list-group-item"> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col mt-5 m-2">
+            <h3 class="mt-5">Nuevo producto:</h3>
+            <form id="productForm">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Title:</span>
+                    <input type="text" id="title" name="title" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Description:</span>
+                    <input type="text" id="description" name="description" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Code:</span>
+                    <input type="text" id="code" name="code" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Category:</span>
+                    <input type="text" id="category" name="category" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Stock:</span>
+                    <input type="number" id="stock" name="stock" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Price:</span>
+                    <span class="input-group-text" id="inputGroup-sizing-default">$</span>
+                    <input type="number" id="price" name="price" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01">Thumbnail</label>
+                    <input type="file" id="thumbnails" name="thumbnails" multiple class="form-control" id="thumbnails">
+                </div>
+                <button type="submit" class="btn btn-success">Cargar</button>
+            </form>
+            <h3 class="mt-5">Eliminar producto:</h3>
+            <form id="deleteProductForm">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Id:</span>
+                    <input type="number" id="id" name="id" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </form>
         </div>
     </div>
-    <div class="col mt-5 m-2">
-        <h3 class="mt-20">Nuevo producto:</h3>
-
-        <form id="productForm">
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Title</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Description</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Code</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                <span class="input-group-text" id="inputGroup-sizing-default">Category</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Stock</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                <span class="input-group-text" id="inputGroup-sizing-default">Price</span>
-                <span class="input-group-text" id="inputGroup-sizing-default">$</span>
-                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-            </div>
-            <button type="submit" class="btn btn-success">Cargar</button>
-        </form>
-    </div>
-    </div>
 </main>
-
 
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
@@ -50,14 +58,14 @@
     const socketClient = io(wsServer);
     const listProd = document.getElementById('listProd');
 
+    const prodNoExiste = document.getElementById('prodNoExiste');
+
     socketClient.on('newProduct', prodAdd => {
-        //console.log(prodAdd);
         listProd.innerHTML += `<br> Id: ${prodAdd.id} | Nombre: ${prodAdd.title} | Precio: $${prodAdd.price}.`;
     });
     
     socketClient.on('cargaProducts', prodRender => {
         listProd.innerHTML = ``
-        //console.log(prodRender.prodRender);
         for (let i = 0; i < prodRender.prodRender.length; i++) {
             if(i===0) {
                 listProd.innerHTML += `Id: ${prodRender.prodRender[i].id} | Nombre: ${prodRender.prodRender[i].title} | Precio: $${prodRender.prodRender[i].price}.`;
@@ -69,7 +77,6 @@
 
     socketClient.on('deleteProduct', prodRender => {
         listProd.innerHTML = ``
-        console.log(prodRender);
         for (let i = 0; i < prodRender.length; i++) {
             if(i===0) {
                 listProd.innerHTML += `Id: ${prodRender[i].id} | Nombre: ${prodRender[i].title} | Precio: $${prodRender[i].price}.`;
@@ -79,5 +86,31 @@
         }
     });
 
+    productForm.addEventListener('submit', async (evt) => {
+        evt.preventDefault();
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const code = document.getElementById('code').value;
+        const category = document.getElementById('category').value;
+        const stock = document.getElementById('stock').value;
+        const price = document.getElementById('price').value;
+        const thumbnails = document.getElementById('thumbnails').value;
+        const process = await fetch('/api/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, description, code, category, stock, price, thumbnails })
+        });
+        productForm.reset();
+    });
+
+    deleteProductForm.addEventListener('submit', async (evt) => {
+        evt.preventDefault();
+        const id = document.getElementById('id').value;
+        const process = await fetch(`/api/products/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        deleteProductForm.reset();
+    });
 
 </script>
