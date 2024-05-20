@@ -78,7 +78,8 @@ class ProductManager {
     async updateProduct(id, prodU) {
         try {
             //const products = await this.getProductsFromFile();
-            const product = await productsModel.findOneAndUpdate( { _id : id }, prodU );
+            const product = await productsModel.findOneAndUpdate( { _id: id }, prodU, { new: true } );
+            console.log(product);
             if (product) {
                 return 0;
             } else {
@@ -108,13 +109,13 @@ class ProductManager {
     async deleteProduct(id) {
         try {
             //const products = await this.getProductsFromFile();
-            const product = await productsModel.findOneAndDelete( { _id : id } );
+            const product = await productsModel.findOneAndDelete( { _id: id } );
             //const prod = products.find(prod => prod.id === id);
-            if (prod === undefined) {
+            if (product) {
                 return 0
             } else {
-                const productsFilter = products.filter(product => product.id !== id);
-                await this.saveProductsToFile(productsFilter);
+                //const productsFilter = products.filter(product => product.id !== id);
+                //await this.saveProductsToFile(productsFilter);
                 return 1
             }
         } catch (error) {

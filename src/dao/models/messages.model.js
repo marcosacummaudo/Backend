@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 mongoose.pluralize(null);
 
-const collection = 'message';
+const collection = 'messages';
 
 const schema = new mongoose.Schema({
     user: { type: String, require: true },

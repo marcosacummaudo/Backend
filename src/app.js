@@ -8,6 +8,7 @@ import cartsRouter from './routes/carts.routes.js';
 import viewsRouter from './routes/views.routes.js';
 
 import ProductManager from './dao/ProductManager.js';
+import MessageManagerDB from './dao/MessageManagerDB.js';
 
 const app = express();
 
@@ -37,10 +38,22 @@ app.set('socketServer', socketServer);
 
 //Escucho a un cliente
 socketServer.on('connection', async (client) => {
+    const messageManager = new MessageManagerDB();
+    const savedMessages = await messageManager.getMessages();
+    const messageRender = { messageRender: savedMessages };
+    client.emit('cargaMessages', messageRender);
+    
     const manager = new ProductManager();
     const products = await manager.getProducts(0);
-    console.log('Cliente conectado!!!');
     const prodRender = { prodRender: products };
     client.emit('cargaProducts', prodRender);
+
+    //console.log(`Cliente conectado, id: ${client.id} desde ${client.handshake.address}!!!`);
+
+    client.on('newMessage', async (data) => {
+        console.log(`Mensaje recibido desde: ${client.id}. Mensaje:${data.message}, con usuario: ${data.user}`);
+        const message = await messageManager.saveMessage(data);
+        socketServer.emit('newMessageConfirmation', (data));
+    })
 });
 

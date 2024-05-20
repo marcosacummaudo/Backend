@@ -1,0 +1,72 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+<script type="module"> 
+    const wsServer = 'ws://localhost:8080'
+    const socketClient = io(wsServer);
+    const chat = document.getElementById('chat');
+    const chatList = document.getElementById('chatList');
+    const sendButton = document.getElementById('sendButton');
+    const userName = document.getElementById('userName');
+
+    socketClient.on('newMessageConfirmation', data => {
+        chatList.innerHTML += `<br> User: ${data.user} | Mensaje: ${data.message}.`;
+    });
+
+    const sendMessage = () => {
+        if(chat.value !== '') {
+            socketClient.emit( 'newMessage', { user: user, message: chat.value } );
+            chat.value = '';
+        }
+    }
+
+    socketClient.on('cargaMessages', messageRender => {
+        chatList.innerHTML = ``
+        for (let i = 0; i < messageRender.messageRender.length; i++) {
+            if(i===0) {
+                chatList.innerHTML += `User: ${messageRender.messageRender[i].user} | Mensaje: ${messageRender.messageRender[i].message}.`;
+            } else {
+                chatList.innerHTML += `<br> User: ${messageRender.messageRender[i].user} | Mensaje: ${messageRender.messageRender[i].message}.`;
+            }
+        }
+    });
+
+    const askForUser = async () => {
+        const result = await Swal.fire({
+            title: 'Coderhouse',
+            input: 'text',
+            text: 'Usuario',
+            inputValidator: value => { return !value && 'Se debe indicar usuario' },
+            allowOutsideClick: false
+        });
+        return result.value;
+    }
+
+    let user = await askForUser();
+    userName.innerHTML = `Hola usuario ${user}.`
+    
+    chat.addEventListener('keyup', (evt) => {
+        if (evt.key === 'Enter') sendMessage()
+    });
+
+    sendButton.addEventListener('click', (evt) => {
+        sendMessage();
+    });
+
+</script>
+
+
+<div>
+    <h1> Sistema de Chat Websocket </h1>
+    <h3 id="userName"> </h3>
+    <div>
+        <input type="text" id="chat" name="chat" placeholder="Ingresar mensaje" style="width: 300px;">
+        <br>
+        <button id="sendButton">Enviar</button>
+    </div>
+    <div>
+        <p id="chatList"></p>
+    </div>
+</div>
+
