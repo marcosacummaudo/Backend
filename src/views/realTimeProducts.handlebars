@@ -42,7 +42,7 @@
             <form id="deleteProductForm">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default">Id:</span>
-                    <input type="number" id="id" name="id" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    <input type="text" id="id" name="id" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                 </div>
                 <button type="submit" class="btn btn-danger">Eliminar</button>
             </form>
@@ -58,19 +58,19 @@
     const socketClient = io(wsServer);
     const listProd = document.getElementById('listProd');
 
-    const prodNoExiste = document.getElementById('prodNoExiste');
-
     socketClient.on('newProduct', prodAdd => {
-        listProd.innerHTML += `<br> Id: ${prodAdd.id} | Nombre: ${prodAdd.title} | Precio: $${prodAdd.price}.`;
+        if(prodAdd) {
+            listProd.innerHTML += `<br> Id: ${prodAdd._id} | Nombre: ${prodAdd.title} | Precio: $${prodAdd.price}.`;
+        }
     });
     
     socketClient.on('cargaProducts', prodRender => {
         listProd.innerHTML = ``
         for (let i = 0; i < prodRender.prodRender.length; i++) {
             if(i===0) {
-                listProd.innerHTML += `Id: ${prodRender.prodRender[i].id} | Nombre: ${prodRender.prodRender[i].title} | Precio: $${prodRender.prodRender[i].price}.`;
+                listProd.innerHTML += `Id: ${prodRender.prodRender[i]._id} | Nombre: ${prodRender.prodRender[i].title} | Precio: $${prodRender.prodRender[i].price}.`;
             } else {
-                listProd.innerHTML += `<br> Id: ${prodRender.prodRender[i].id} | Nombre: ${prodRender.prodRender[i].title} | Precio: $${prodRender.prodRender[i].price}.`;
+                listProd.innerHTML += `<br> Id: ${prodRender.prodRender[i]._id} | Nombre: ${prodRender.prodRender[i].title} | Precio: $${prodRender.prodRender[i].price}.`;
             }
         }
     });
@@ -79,9 +79,9 @@
         listProd.innerHTML = ``
         for (let i = 0; i < prodRender.length; i++) {
             if(i===0) {
-                listProd.innerHTML += `Id: ${prodRender[i].id} | Nombre: ${prodRender[i].title} | Precio: $${prodRender[i].price}.`;
+                listProd.innerHTML += `Id: ${prodRender[i]._id} | Nombre: ${prodRender[i].title} | Precio: $${prodRender[i].price}.`;
             } else {
-                listProd.innerHTML += `<br> Id: ${prodRender[i].id} | Nombre: ${prodRender[i].title} | Precio: $${prodRender[i].price}.`;
+                listProd.innerHTML += `<br> Id: ${prodRender[i]._id} | Nombre: ${prodRender[i].title} | Precio: $${prodRender[i].price}.`;
             }
         }
     });

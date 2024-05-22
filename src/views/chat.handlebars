@@ -11,7 +11,8 @@
     const userName = document.getElementById('userName');
 
     socketClient.on('newMessageConfirmation', data => {
-        chatList.innerHTML += `<br> User: ${data.user} | Mensaje: ${data.message}.`;
+        chatList.insertAdjacentHTML('afterbegin', ` User: ${data.user} (${data.date}) | Mensaje: ${data.message}. <br>`);
+
     });
 
     const sendMessage = () => {
@@ -25,9 +26,9 @@
         chatList.innerHTML = ``
         for (let i = 0; i < messageRender.messageRender.length; i++) {
             if(i===0) {
-                chatList.innerHTML += `User: ${messageRender.messageRender[i].user} | Mensaje: ${messageRender.messageRender[i].message}.`;
+                chatList.innerHTML += `User: ${messageRender.messageRender[i].user} (${messageRender.messageRender[i].date}) | Mensaje: ${messageRender.messageRender[i].message}.`;
             } else {
-                chatList.innerHTML += `<br> User: ${messageRender.messageRender[i].user} | Mensaje: ${messageRender.messageRender[i].message}.`;
+                chatList.innerHTML += `<br> User: ${messageRender.messageRender[i].user} (${messageRender.messageRender[i].date}) | Mensaje: ${messageRender.messageRender[i].message}.`;
             }
         }
     });

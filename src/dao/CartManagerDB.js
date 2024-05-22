@@ -1,32 +1,29 @@
-import fs from 'fs'
-import ProductManager from './ProductManager.js';
+//import fs from 'fs'
+import cartsModel from '../dao/models/carts.model.js';
+import ProductManager from './ProductManagerDB.js';
 
 class CartManager {
     constructor() {
-        this.path = './src/carts.json';
+        //this.path = './src/carts.json';
     }
 
     async newCart() {
         try {
-            const carts = await this.getCartsFromFile();
             const cart = {
-                id: 0,
+                _user_id: '664babaf8a9adb621273a771',
                 products: []
             };
-            cart.id = carts.length > 0 ? Math.max(...carts.map(p => p.id)) + 1 : 1;
-            carts.push(cart);
-            await this.saveCartsToFile(carts);
-            return cart.id;
+            const cartAdded = await cartsModel.create(cart);
+            return cartAdded
         } catch (error) {
             console.log('Error al crear un carrito.');
             console.log(error);
         }
     }
     
-    async getCartById(id) {
+    async getCartById(cid) {
         try {
-            const carts = await this.getCartsFromFile();
-            const cart = carts.find(cart => cart.id === +id) || {};
+            const cart = await cartsModel.findById(cid).lean();
             return cart;
         } catch (error) {
             console.log('Error al buscar el carrito por su id.');
@@ -36,24 +33,23 @@ class CartManager {
 
     async addToCart(cid, pid) {
         try {
-            const carts = await this.getCartsFromFile();
-            const cartIndex = carts.findIndex(cart => cart.id === +cid);
-            if (cartIndex === -1) {
+            const cart = await cartsModel.findById(cid).lean();
+            if (!cart) {
                 return 0 //No exite el carrito
             } else {
                 const prodManager = new ProductManager();
                 const prod = await prodManager.getProductById(pid);
-                if (prod.id === undefined) {
+                if (!prod) {
                     return 1 //No existe el producto
                 } else {
-                    const prodIndex = carts[cartIndex].products.findIndex(prod => prod.id === +pid);
+                    const prodIndex = cart.products.findIndex(prod => String(prod._id) === String(pid));
                     if (prodIndex === -1) {
-                        const prodAdd = { id: pid, quantity: 1}
-                        carts[cartIndex].products.push(prodAdd);
+                        const prodAdd = { _id: pid, quantity: 1}
+                        cart.products.push(prodAdd);
                     } else {
-                        carts[cartIndex].products[prodIndex].quantity++
+                        cart.products[prodIndex].quantity++
                     }
-                    await this.saveCartsToFile(carts);
+                    const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
                     return 2; //Se agrego el producto al carrito
                 }
             }
@@ -61,20 +57,6 @@ class CartManager {
             console.log('Error al agregar un producto a un carrito.');
             console.log(error);
         }
-    }
-
-    async getCartsFromFile() {
-        try {
-            const data = await fs.promises.readFile(this.path, 'utf8');
-            return JSON.parse(data);
-        } catch (error) {
-            console.log('Error al intentar leer los carritos del archivo.');
-            console.log(error);
-        }
-    }
-
-    async saveCartsToFile(carts) {
-        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
     }
 }
 

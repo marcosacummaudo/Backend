@@ -261,5 +261,65 @@
     "id": 26,
     "status": true,
     "thumbnail": []
+  },
+  {
+    "title": "Producto1",
+    "description": "Producto de ejemplo",
+    "code": "44kkmknm",
+    "category": "clase1",
+    "stock": "33",
+    "price": "434343",
+    "thumbnails": "",
+    "id": 27,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "ProductoX",
+    "description": "ejemplos de prod",
+    "code": "rrff33454434",
+    "category": "clase4",
+    "stock": "34",
+    "price": "151",
+    "thumbnails": "",
+    "id": 28,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "r4rererer",
+    "description": "rererere",
+    "code": "reee",
+    "category": "rere",
+    "stock": "77",
+    "price": "78484",
+    "thumbnails": "",
+    "id": 29,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "ttttttt",
+    "description": "yyyyyyyyy",
+    "code": "ytre",
+    "category": "trew",
+    "stock": "776",
+    "price": "7665666",
+    "thumbnails": "",
+    "id": 30,
+    "status": true,
+    "thumbnail": []
+  },
+  {
+    "title": "tgtrg",
+    "description": "gtrgrtg",
+    "code": "grg",
+    "category": "grtg",
+    "stock": "555555",
+    "price": "5555",
+    "thumbnails": "",
+    "id": 31,
+    "status": true,
+    "thumbnail": []
   }
 ]

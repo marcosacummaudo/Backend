@@ -7,6 +7,7 @@ class MessageManager {
     async saveMessage(data) {
         try {
             const process = await messagesModel.create(data);
+            return process;
             }
         catch (error) {
             console.log('Error al agregar un mensaje.');
@@ -16,7 +17,7 @@ class MessageManager {
 
     async getMessages() {
         try {
-            const messages = await messagesModel.find().lean();
+            const messages = await messagesModel.find().sort({ date: -1 }).lean();
             return messages
         } catch (error) {
             console.log('Error al mostrar los productos.');
