@@ -24,14 +24,50 @@ class ProductManager {
         }
     }
 
-    async getProducts(limit) {
+    async getProducts(limit, page, sort, query) {
         try {
             let products;
-            if(limit===0) {
-                products = await productsModel.find().lean();
+            let queryFilter = {};
+            let options = {};
+            
+            // Función para parsear la URL y extraer los parámetros de consulta
+            function parseQuery(queryString) {
+                const parsedQuery = {};
+                const parts = queryString.split(':');
+                const key = parts[0];
+                const value = parts[1].replace(/'/g, '').trim(); // Eliminar las comillas simples y espacios en blanco
+                parsedQuery[key] = value;
+                return parsedQuery;
+            }
+
+            if(query===undefined) {
+                queryFilter = { };
             } else {
-                products = await productsModel.find().limit(limit).lean();
-            };
+                queryFilter =  parseQuery(query);
+            }
+
+            if(sort===undefined) {
+                options = {
+                    page: page,
+                    limit: limit
+                };            
+            } else {
+                if(sort==='asc') {
+                    options = {
+                        page: page,
+                        limit: limit,
+                        sort: { price: 1 }
+                    };                       
+                } else {
+                    options = {
+                        page: page,
+                        limit: limit,
+                        sort: { price: -1 }
+                    };   
+                }         
+            }
+
+            products = await productsModel.paginate( queryFilter , options );
             return products;
         } catch (error) {
             console.log('Error al mostrar los productos.');

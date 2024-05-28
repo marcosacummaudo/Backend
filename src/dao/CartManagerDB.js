@@ -58,6 +58,40 @@ class CartManager {
             console.log(error);
         }
     }
+
+    async deleteToCart(cid, pid) {
+        try {
+            const cart = await cartsModel.findById(cid).lean();
+            if (!cart) {
+                return 0 //No exite el carrito
+            } else {
+                const prodManager = new ProductManager();
+                const prod = await prodManager.getProductById(pid);
+                if (!prod) {
+                    return 1 //No existe el producto
+                } else {
+
+                    //const productsFilter = products.filter(product => product.id !== id);
+                    //await this.saveProductsToFile(productsFilter);
+                    //return 1
+
+
+                    const prodIndex = cart.products.findIndex(prod => String(prod._id) === String(pid));
+                    if (prodIndex === -1) {
+                        const prodAdd = { _id: pid, quantity: 1}
+                        cart.products.push(prodAdd);
+                    } else {
+                        cart.products[prodIndex].quantity++
+                    }
+                    const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
+                    return 2; //Se agrego el producto al carrito
+                }
+            }
+        } catch (error) {
+            console.log('Error al agregar un producto a un carrito.');
+            console.log(error);
+        }
+    }
 }
 
 export default CartManager;

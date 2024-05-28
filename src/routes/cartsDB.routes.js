@@ -39,4 +39,20 @@ router.post('/:cid/product/:pid', async (req, res) => {
     };
 });
 
+
+router.delete('/:cid/product/:pid', async (req, res) => {
+    const cid = req.params.cid;
+    const pid = req.params.pid;
+    const rta = await manager.deleteToCart(cid,pid);
+    if (rta === 0) {
+        res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
+    } else {
+        if (rta === 1) {
+            res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe` });
+        } else {
+            res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se agrego el producto con id ${pid} al carrito con id ${cid} OK` });
+        }
+    };
+});
+
 export default router;

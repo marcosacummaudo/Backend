@@ -6,14 +6,18 @@ const router = Router();
 const manager = new ProductManagerDB();
 
 router.get('/', async (req, res) => {
-    const limit = +req.query.limit || 0;
-    const products = await manager.getProducts(limit);
-    if(products.length>0) {
+    const limit = +req.query.limit || 10;
+    const page = +req.query.page || 1;
+    const sort = req.query.sort;
+    const query = req.query.query;
+    const products = await manager.getProducts(limit, page, sort, query);
+    if(products) {
         res.status(200).send({ status: 'Ok', payload: products });
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [] });
     }
 });
+
 
 router.get('/:pid', async (req, res) => {
     const pid = req.params.pid;

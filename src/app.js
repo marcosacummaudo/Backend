@@ -42,8 +42,9 @@ socketServer.on('connection', async (client) => {
     client.emit('cargaMessages', messageRender);
     
     const manager = new ProductManagerDB();
-    const products = await manager.getProducts(0);
-    const prodRender = { prodRender: products };
+    const products = await manager.getProducts();
+    const prodRender = { prodRender: products.docs };
+    //console.log(prodRender);
     client.emit('cargaProducts', prodRender);
 
     client.on('newMessage', async (data) => {
