@@ -1,0 +1,12 @@
+<main class="container">
+    <div class="productos">
+        <h2>Carrito ID: {{cartRender._id}}</h2>
+        <h2>Carrito del user: {{cartRender._user_id}}</h2>
+            <ul class="list-group list-group-flush p-2">
+                <h3>Productos del carrito:</h3>
+                {{#each this.cartRender.products}}
+                    <li class="list-group-item">Id: {{this._id._id}} | Nombre: {{this._id.title}} | Precio: ${{this._id.price}} | Cantidad: {{this.quantity}}</li>
+                {{/each}}
+            </ul>
+    </div>
+</main>

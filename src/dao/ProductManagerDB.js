@@ -49,19 +49,22 @@ class ProductManager {
             if(sort===undefined) {
                 options = {
                     page: page,
-                    limit: limit
+                    limit: limit,
+                    lean: true
                 };            
             } else {
                 if(sort==='asc') {
                     options = {
                         page: page,
                         limit: limit,
+                        lean: true,
                         sort: { price: 1 }
                     };                       
                 } else {
                     options = {
                         page: page,
                         limit: limit,
+                        lean: true,
                         sort: { price: -1 }
                     };   
                 }         
