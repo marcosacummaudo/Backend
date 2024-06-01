@@ -25,7 +25,6 @@ router.get('/products', async (req, res) => {
     const page = +req.query.page;
     const limit = +req.query.limit || 10;
     const prodRender = { prodRender: await manager.getProducts(limit, page) };
-    console.log(prodRender);
     res.render('products', prodRender);
 });
 

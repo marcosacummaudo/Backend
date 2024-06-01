@@ -13,7 +13,7 @@
                             <p class="card-text">Categoría: {{this.category}}</p>
                             <p class="card-text">Stock: {{this.stock}}</p>
                             <p class="card-text">Precio: ${{this.price}}</p>
-                            <button class="btn btn-primary add-to-cart" data-id="{{this._id}}" type="submit">Agregar al carrito</button>
+                            <button class="btn btn-primary add-to-cart" onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
                         </div>
                     </div>
                 </div>
@@ -38,20 +38,16 @@
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
 
-<script type="module"> 
+<script> 
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.add-to-cart');
-            buttons.forEach(button => {
-                button.addEventListener('submit', async (evt) {
-                    const productId = this.getAttribute('data-id');
-  
-                    const process = await fetch(`/api/carts/6657506705b4d620fa3b6729/product/${productId}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                });
-            });
+    const addToCart = async (pid) => {
+        const cart = '6657506705b4d620fa3b6729';
+        
+        const process = await fetch(`/api/carts/${cart}/product/${pid}`, {
+        
+            method: 'POST'
         });
+        const result = await process.json();
+    }
 
 </script>
