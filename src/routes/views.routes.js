@@ -25,7 +25,7 @@ router.get('/products', async (req, res) => {
     const page = +req.query.page;
     const limit = +req.query.limit || 10;
     const prodRender = { prodRender: await manager.getProducts(limit, page) };
-    res.render('products', prodRender);
+    res.render('products', { user: req.session.user , prodRender: prodRender });
 });
 
 router.get('/carts/:cid', async (req, res) => {
@@ -35,10 +35,25 @@ router.get('/carts/:cid', async (req, res) => {
 });
 
 
-router.get('/chat', (req, res) => {
-    
-    res.render('chat', {});
-    
+router.get('/chat', (req, res) => {    
+    res.render('chat', {});    
+});
+
+
+router.get('/register', (req, res) => {
+    res.render('register', {});
+});
+
+
+router.get('/login', (req, res) => {
+    if (req.session.user) return res.redirect('/products');
+    res.render('login', {});
+});
+
+
+router.get('/profile', (req, res) => {
+    if (!req.session.user) return res.redirect('/login');
+    res.render('profile', { user: req.session.user });
 });
 
 

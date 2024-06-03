@@ -1,7 +1,40 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><h1 class="text-center"><img src="static/img/LogoGOAT.png" alt="Logo" width="60" height="60"><b>GOAT</b></h1></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {{!-- <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pricing</a>
+        </li> --}}
+      </ul>
+      <span class="navbar-text">
+            {{#if user}}
+                <p><b>Bienvenido, {{user.firstName}} (Rol: {{user.role}})</b></p>
+                <form action="/api/sessions/logout" method="get">
+                    <button type="submit" class="btn btn-dark">Salir</button>
+                </form>
+            {{else}}
+                <p>Usuario no identificado.</p>
+                <a href="/login"><button class="btn btn-dark">Login</button></a>
+            {{/if}}
+      </span>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
         <h2>Lista de Productos</h2>
         <div class="row">
-            {{#each prodRender.docs}}
+            {{#each prodRender.prodRender.docs}}
                 <div id="cardProd" class="col-sm-6 col-md-4 col-lg-3 mb-3">
                     <div class="card" style="width: 100%;">
                         <div class="card-img-container">
@@ -23,14 +56,14 @@
 </div>
         <!-- Paginación -->
         <div class="mt-2 text-end">
-            {{#if prodRender.prevPage}}
-            <a class="a3" href="/products?page={{prodRender.prevPage}}">Anterior</a>
+            {{#if prodRender.prodRender.prevPage}}
+            <a class="a3" href="/products?page={{prodRender.prodRender.prevPage}}">Anterior</a>
             {{/if}}
             
             &nbsp;|&nbsp;
             
-            {{#if prodRender.nextPage}}
-            <a class="a3" href="/products?page={{prodRender.nextPage}}">Siguiente</a>
+            {{#if prodRender.prodRender.nextPage}}
+            <a class="a3" href="/products?page={{prodRender.prodRender.nextPage}}">Siguiente</a>
             {{/if}}
         </div>
 

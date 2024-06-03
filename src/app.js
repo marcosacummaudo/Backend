@@ -5,15 +5,32 @@ import { Server } from 'socket.io';
 import config from './config.js';
 import productsRouter from './routes/productDB.routes.js';
 import cartsRouter from './routes/cartsDB.routes.js';
+import usersRouter from './routes/usersDB.routes.js';
 import viewsRouter from './routes/views.routes.js';
-
 import ProductManagerDB from './dao/ProductManagerDB.js';
 import MessageManagerDB from './dao/MessageManagerDB.js';
+//import UsersManagerDB from './dao/UsersManagerDB.js';
+import session from 'express-session';
+import FileStore from 'session-file-store';
+// import MongoStore from 'connect-mongo';
+import cookieParser from 'cookie-parser';
+import sessionRouter from './routes/sessions.routes.js';
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser(config.SECRET));
+    
+const fileStorage = FileStore(session);
+app.use(session({
+    store: new fileStorage({ path: './sessions', ttl: 100, retries: 0 }),
+    // store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 600 }),
+    secret: config.SECRET,
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${config.DIRNAME}/views`);
@@ -23,6 +40,8 @@ app.use('/', viewsRouter);
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/sessions', sessionRouter);
 
 app.use('/static', express.static(`${config.DIRNAME}/public`));
 
@@ -44,7 +63,6 @@ socketServer.on('connection', async (client) => {
     const manager = new ProductManagerDB();
     const products = await manager.getProducts();
     const prodRender = { prodRender: products.docs };
-    //console.log(prodRender);
     client.emit('cargaProducts', prodRender);
 
     client.on('newMessage', async (data) => {
