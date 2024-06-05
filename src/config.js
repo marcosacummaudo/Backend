@@ -10,3 +10,12 @@ const config = {
 }
 
 export default config;
+
+
+
+//GitHub:
+
+//Client ID: Iv23lic9aBPwbZMleq8i
+
+//Client secrets:
+//abca3685cb4ae8a2ce8654b0522958c7582ccc13
