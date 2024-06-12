@@ -26,7 +26,7 @@
 
     <h2><b>Login de usuario</b></h2>
 
-    <form action="/api/sessions/login" method="post" style="margin-top: 32px;">
+    <form action="/api/sessions/pplogin" method="post" style="margin-top: 32px;">
         <div class="input-group" style="width: 300px; margin-bottom: 32px;">
             <span class="input-group-text" id="group1"><i class="fa-solid fa-user"></i></span>
             <input type="text" name="email" class="form-control" placeholder="Username" required="required" autofocus="autofocus">
@@ -37,12 +37,22 @@
             <input type="password" name="password" class="form-control" placeholder="Password" required="required">
         </div>
 
+        {{#if showError}}
+            <div class="alert alert-danger" role="alert" style="margin-top: 16px;">
+                {{ errorMessage }}
+            </div>
+        {{/if}}
+
         <button type="submit" class="btn btn-success">Ingresar</button>
 
         <div style="margin-top: 24px;">
             Aún no tenés cuenta?: <a class="a2" href="/register">Registrate</a>
         </div>
     </form>
+
+        <div style="margin-top: 24px;">
+            <button class="btn btn-info submit_btn" onclick="window.location.replace('/api/sessions/ghlogin')">Github</button>
+        </div>
 </div>
 
 

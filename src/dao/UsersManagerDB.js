@@ -23,7 +23,7 @@ class UsersManager {
         }
     }
 
-    async getProductsByEmail(email) {
+    async getUserByEmail(email) {
         try {
 
             const user = await usersModel.findOne( { email: email } ).lean();
