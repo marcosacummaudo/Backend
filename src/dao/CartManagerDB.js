@@ -5,13 +5,13 @@ import productsModel from './models/products.model.js';
 
 class CartManager {
     constructor() {
-        //this.path = './src/carts.json';
+        
     }
 
     async newCart() {
         try {
             const cart = {
-                _user_id: '664babaf8a9adb621273a771',
+                //_user_id: '664babaf8a9adb621273a771',
                 products: []
             };
             const cartAdded = await cartsModel.create(cart);
@@ -87,7 +87,6 @@ class CartManager {
             if (!cart) {
                 return 0 //No exite el carrito
             } else {
-                //cart.products.push(prodUp);
                 cart.products = prodUp;
                 const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
                 return 1; //Se actualizo el array de productos del carrito

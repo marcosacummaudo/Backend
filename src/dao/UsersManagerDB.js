@@ -1,4 +1,5 @@
 import usersModel from '../dao/models/users.model.js';
+import CartManagerDB from './CartManagerDB.js';
 
 class UsersManager {
     constructor() {
@@ -6,13 +7,16 @@ class UsersManager {
 
     async addUser(userAdd) {
         try {
-            if (!userAdd.firstName || !userAdd.lastName || !userAdd.email || !userAdd.password || !userAdd.gender) {
+            if (!userAdd.firstName || !userAdd.lastName || !userAdd.email || !userAdd.password || !userAdd.age) {
                 return 0;
             } else {
                 const users = await usersModel.findOne( { email: userAdd.email } ).lean();
                 if (users) {
                     return 1;
                 } else {
+                    const cartManager = new CartManagerDB();
+                    const newCart = await cartManager.newCart();
+                    userAdd.cart = newCart._id
                     const userAdded = await usersModel.create(userAdd);
                     return userAdded;
                 }

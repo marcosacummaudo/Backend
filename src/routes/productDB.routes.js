@@ -5,6 +5,14 @@ const router = Router();
 
 const manager = new ProductManagerDB();
 
+router.param('id', async (req, res, next, id) => {
+    if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
+        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    }
+
+    next();
+})
+
 router.get('/', async (req, res) => {
     const limit = +req.query.limit || 10;
     const page = +req.query.page || 1;
@@ -55,6 +63,10 @@ router.delete('/:pid', async (req, res) => {
     res.status(200).send({ status: 'Ok', payload: [], mensaje: `Producto con id ${pid}, fue borrado.` });
     const prodRender = await manager.getProducts(0);
     socketServer.emit('deleteProduct', prodRender);
+});
+
+router.all('*', async (req, res) => {
+    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' }); 
 });
 
 export default router;

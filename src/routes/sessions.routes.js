@@ -95,4 +95,18 @@ router.get('/logout', async (req, res) => {
     }
 });
 
+
+router.get('/current', async (req, res) => {
+    if(req.session.user) {
+        res.status(200).send({ status: 'Ok', payload: req.session.user });
+    } else {
+        res.status(400).send({ status: 'Not Ok', payload: [] });
+    }
+});
+
+
+router.all('*', async (req, res) => {
+    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' }); 
+});
+
 export default router;

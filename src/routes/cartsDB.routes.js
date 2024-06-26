@@ -5,6 +5,22 @@ const router = Router();
 
 const manager = new CartManager();
 
+router.param('cid', async (req, res, next, id) => {
+    if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
+        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    }
+
+    next();
+})
+
+router.param('pid', async (req, res, next, id) => {
+    if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
+        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    }
+
+    next();
+})
+
 router.post('/', async (req, res) => {
     const rta = await manager.newCart();
     if (rta) {
@@ -98,6 +114,11 @@ router.delete('/:cid', async (req, res) => {
     } else {
         res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se vacio correctamente el carrito con id ${cid}. OK` });
     };
+});
+
+
+router.all('*', async (req, res) => {
+    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' }); 
 });
 
 export default router;

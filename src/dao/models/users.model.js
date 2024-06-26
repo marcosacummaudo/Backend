@@ -9,9 +9,10 @@ const schema = new mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true, index: false },
     email: { type: String, required: true },
+    age: { type: Number, required: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['admin', 'premium', 'user'], default: 'user' },
-    gender: { type: String, enum: ['M', 'F'] }
+    cart: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'carts' },
+    role: { type: String, enum: ['admin', 'premium', 'user'], default: 'user' }
 });
 
 schema.plugin(mongoosePaginate);

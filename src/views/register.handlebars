@@ -50,10 +50,7 @@
 
         <div class="input-group" style="width: 100%; margin-bottom: 8px;">
             <span class="input-group-text" id="group4"><i class="fa-solid fa-venus-mars"></i></span>
-            <select  id="gender" name="gender" class="form-control">
-                <option value="F" selected>Femenino</option>
-                <option value="M">Masculino</option>
-            </select>
+            <input type="number" id="age" name="age" class="form-control" placeholder="Edad" required="required" autocomplete="age">
         </div>
 
         <div class="input-group" style="width: 100%; margin-bottom: 32px;">
@@ -82,14 +79,14 @@
         const firstName = document.getElementById('firstName').value;
         const lastName = document.getElementById('lastName').value;
         const email = document.getElementById('email').value;
-        const gender = document.getElementById('gender').value;
+        const age = document.getElementById('age').value;
         const password = document.getElementById('password').value;
 
         try {
                 const process = await fetch(`/api/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ firstName, lastName, email, gender, password })
+                    body: JSON.stringify({ firstName, lastName, email, age, password })
                 });
 
                 const result = await process.json();

@@ -57,7 +57,7 @@ const initAuthStrategies = () => {
                         const user = {
                             firstName: profile.username,
                             lastName: profile.username,
-                            gender: 'M', //Pongo un genero por defecto para que no haya problemas con el modelo.
+                            age: 0, //Pongo un 0 en edad por defecto para que no haya problemas con el modelo.
                             email: emailsList,
                             password: 'none' // No lo dejamos vacío porque en el modelo está requerido
                         }
