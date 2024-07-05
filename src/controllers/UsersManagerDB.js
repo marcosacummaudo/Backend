@@ -1,4 +1,4 @@
-import usersModel from '../dao/models/users.model.js';
+import usersModel from '../models/users.model.js';
 import CartManagerDB from './CartManagerDB.js';
 
 class UsersManager {

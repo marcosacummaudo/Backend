@@ -1,7 +1,7 @@
 //import fs from 'fs'
-import cartsModel from '../dao/models/carts.model.js';
+import cartsModel from '../models/carts.model.js';
 import ProductManager from './ProductManagerDB.js';
-import productsModel from './models/products.model.js';
+import productsModel from '../models/products.model.js';
 
 class CartManager {
     constructor() {

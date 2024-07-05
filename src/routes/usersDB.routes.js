@@ -1,5 +1,5 @@
 import { Router } from "express";
-import UsersManagerDB from '../dao/UsersManagerDB.js';
+import UsersManagerDB from '../controllers/UsersManagerDB.js';
 import config from '../config.js';
 import { createHash, isValidPassword, verifyRequiredBody } from '../utils.js';
 
