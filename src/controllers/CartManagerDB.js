@@ -1,7 +1,7 @@
-//import fs from 'fs'
-import cartsModel from '../models/carts.model.js';
 import ProductManager from './ProductManagerDB.js';
-import productsModel from '../models/products.model.js';
+import CartsService from '../services/Cart.dao.MDB.js';
+
+const service = new CartsService();
 
 class CartManager {
     constructor() {
@@ -11,10 +11,9 @@ class CartManager {
     async newCart() {
         try {
             const cart = {
-                //_user_id: '664babaf8a9adb621273a771',
                 products: []
             };
-            const cartAdded = await cartsModel.create(cart);
+            const cartAdded = await service.add(cart);
             return cartAdded
         } catch (error) {
             console.log('Error al crear un carrito.');
@@ -24,7 +23,7 @@ class CartManager {
     
     async getCartById(cid) {
         try {
-            const cart = await cartsModel.findById(cid).populate({ path: 'products._id', model: productsModel }).lean();
+            const cart = await service.getOne({ _id: cid });
             return cart;
         } catch (error) {
             console.log('Error al buscar el carrito por su id.');
@@ -34,12 +33,12 @@ class CartManager {
 
     async addToCart(cid, pid) {
         try {
-            const cart = await cartsModel.findById(cid).lean();
+            const cart = await service.getOne({ _id: cid });
             if (!cart) {
                 return 0 //No exite el carrito
             } else {
                 const prodManager = new ProductManager();
-                const prod = await prodManager.getProductById(pid);
+                const prod = await prodManager.getOneProduct({ _id: pid });
                 if (!prod) {
                     return 1 //No existe el producto
                 } else {
@@ -50,7 +49,7 @@ class CartManager {
                     } else {
                         cart.products[prodIndex].quantity++
                     }
-                    const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
+                    const cartUpdate = await service.update(cid, cart);
                     return 2; //Se agrego el producto al carrito
                 }
             }
@@ -62,16 +61,16 @@ class CartManager {
 
     async deleteToCart(cid, pid) {
         try {
-            const cart = await cartsModel.findById(cid).lean();
+            const cart = await service.getOne({ _id: cid });
             if (!cart) {
                 return 0 //No exite el carrito
             } else {
-                const prodIndex = cart.products.findIndex(prod => String(prod._id) === String(pid));
+                const prodIndex = cart.products.findIndex(prod => String(prod._id._id) === String(pid));
                     if (prodIndex === -1) {
                         return 1 //No existe el producto en ese carrito
                     } else {
                         cart.products.splice(prodIndex, 1);
-                        const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
+                        const cartUpdate = await service.update(cid, cart);
                         return 2; //Se elimino el producto del carrito
                     }
             }
@@ -83,12 +82,12 @@ class CartManager {
 
     async updateProductsToCart(cid, prodUp) {
         try {
-            const cart = await cartsModel.findById(cid).lean();
+            const cart = await service.getOne({ _id: cid });
             if (!cart) {
                 return 0 //No exite el carrito
             } else {
                 cart.products = prodUp;
-                const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
+                const cartUpdate = await service.update(cid, cart);
                 return 1; //Se actualizo el array de productos del carrito
             }
         } catch (error) {
@@ -99,16 +98,16 @@ class CartManager {
 
     async updateQuantityProdToCart(cid, pid, quantityUp) {
         try {
-            const cart = await cartsModel.findById(cid).lean();
+            const cart = await service.getOne({ _id: cid });
             if (!cart) {
                 return 0 //No exite el carrito
             } else {
-                const prodIndex = cart.products.findIndex(prod => String(prod._id) === String(pid));
+                const prodIndex = cart.products.findIndex(prod => String(prod._id._id) === String(pid));
                     if (prodIndex === -1) {
                         return 1 //No existe el producto en ese carrito
                     } else {
                         cart.products[prodIndex].quantity = quantityUp;
-                        const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
+                        const cartUpdate = await service.update(cid, cart);
                         return 2; //Se actualizo la cantidad en el producto del carrito
                     }
             }
@@ -120,12 +119,12 @@ class CartManager {
 
     async deleteAllProdToCart(cid) {
         try {
-            const cart = await cartsModel.findById(cid).lean();
+            const cart = await service.getOne({ _id: cid });
             if (!cart) {
                 return 0 //No exite el carrito
             } else {
                 cart.products = [];
-                const cartUpdate = await cartsModel.findOneAndUpdate( { _id: cid }, cart, { new: true } );
+                const cartUpdate = await service.update(cid, cart);
                 return 1; //Se reemplazo el array de productos por uno vacio
             }
         } catch (error) {

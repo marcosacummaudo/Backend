@@ -9,16 +9,18 @@ import usersRouter from './routes/usersDB.routes.js';
 import viewsRouter from './routes/views.routes.js';
 import ProductManagerDB from './controllers/ProductManagerDB.js';
 import MessageManagerDB from './controllers/MessageManagerDB.js';
-//import UsersManagerDB from './controllers/UsersManagerDB.js';
 import passport from 'passport';
 import session from 'express-session';
 import FileStore from 'session-file-store';
 // import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import sessionRouter from './routes/sessions.routes.js';
+import cors from 'cors';
+import MongoSingleton from './services/mongo.singleton.js';
 
 const app = express();
 
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,8 +52,8 @@ app.use('/api/sessions', sessionRouter);
 app.use('/static', express.static(`${config.DIRNAME}/public`));
 
 const httpServer = app.listen(config.PORT, async () => {
-    await mongoose.connect(config.MONGODB_URI);
-    console.log(`Servidor Express activo en puerto ${config.PORT}, con conexion a Mongoose.`);
+
+    MongoSingleton.getInstance();
 });
 
 const socketServer = new Server(httpServer);

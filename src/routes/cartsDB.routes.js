@@ -1,21 +1,22 @@
 import { Router } from "express";
 import CartManager from '../controllers/CartManagerDB.js';
+import config from '../config.js';
 
 const router = Router();
 
 const manager = new CartManager();
 
 router.param('cid', async (req, res, next, id) => {
-    if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
-        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    if (!config.MONGODB_ID_REGEX.test(id)) {
+        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id de carrito no válido' });
     }
 
     next();
 })
 
 router.param('pid', async (req, res, next, id) => {
-    if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
-        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    if (!config.MONGODB_ID_REGEX.test(id)) {
+        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id de producto no válido' });
     }
 
     next();

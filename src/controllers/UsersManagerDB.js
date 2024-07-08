@@ -1,5 +1,7 @@
-import usersModel from '../models/users.model.js';
 import CartManagerDB from './CartManagerDB.js';
+import UsersService from '../services/Users.dao.MDB.js';
+
+const service = new UsersService();
 
 class UsersManager {
     constructor() {
@@ -10,14 +12,14 @@ class UsersManager {
             if (!userAdd.firstName || !userAdd.lastName || !userAdd.email || !userAdd.password || !userAdd.age) {
                 return 0;
             } else {
-                const users = await usersModel.findOne( { email: userAdd.email } ).lean();
+                const users = await service.getOne( { email: userAdd.email } );
                 if (users) {
                     return 1;
                 } else {
                     const cartManager = new CartManagerDB();
                     const newCart = await cartManager.newCart();
                     userAdd.cart = newCart._id
-                    const userAdded = await usersModel.create(userAdd);
+                    const userAdded = await service.add(userAdd);
                     return userAdded;
                 }
             }
@@ -29,9 +31,7 @@ class UsersManager {
 
     async getUserByEmail(email) {
         try {
-
-            const user = await usersModel.findOne( { email: email } ).lean();
-
+            const user = await service.getOne({ email: email });
             return user;
         } catch (error) {
             console.log('Error al buscar un usuario por su email.');

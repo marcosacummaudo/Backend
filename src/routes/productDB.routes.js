@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:pid', async (req, res) => {
     const pid = req.params.pid;
-    const product = await manager.getProductById(pid);
+    const product = await manager.getOneProduct( { _id: pid } );
     if(product !== undefined) {
         res.status(200).send({ status: 'Ok', payload: product });
     } else {

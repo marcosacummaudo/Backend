@@ -1,4 +1,6 @@
-import productsModel from '../models/products.model.js';
+import ProductsService from '../services/Product.dao.mDB.js';
+
+const service = new ProductsService();
 
 class ProductManager {
     constructor() {
@@ -9,12 +11,12 @@ class ProductManager {
             if (!prodAdd.title || !prodAdd.description || !prodAdd.price || !prodAdd.code || !prodAdd.stock || !prodAdd.category) {
                 return 0;
             } else {
-                const products = await productsModel.findOne( { code: prodAdd.code } ).lean();
+                const products = await service.getOne( { code: prodAdd.code } );
                 if (products) {
                     return 1;
                 } else {
                     prodAdd.status = true;
-                    const prodAdded = await productsModel.create(prodAdd);
+                    const prodAdded = await service.add(prodAdd);
                     return prodAdded;
                 }
             }
@@ -70,7 +72,7 @@ class ProductManager {
                 }         
             }
 
-            products = await productsModel.paginate( queryFilter , options );
+            products = await service.getPaginated( queryFilter , options );
             return products;
         } catch (error) {
             console.log('Error al mostrar los productos.');
@@ -78,11 +80,11 @@ class ProductManager {
         }
     }
 
-    async getProductById(id) {
+    async getOneProduct(filter) {
         try {
-            const products = await productsModel.findById(id).lean();
+            const products = await service.getOne(filter);
             if (!products) {
-                console.log(`Producto con id ${id} no existe.`)
+                console.log(`Producto con id ${products._id} no existe.`)
             } else {
                 return products;
             }
@@ -94,7 +96,7 @@ class ProductManager {
 
     async updateProduct(id, prodU) {
         try {
-            const product = await productsModel.findOneAndUpdate( { _id: id }, prodU, { new: true } );
+            const product = await service.update(id, prodU);
             if (product) {
                 return 0;
             } else {
@@ -108,7 +110,7 @@ class ProductManager {
 
     async deleteProduct(id) {
         try {
-            const product = await productsModel.findOneAndDelete( { _id: id } );
+            const product = await service.delete( { _id: id } );
             return product
         } catch (error) {
             console.log('Error al intentar borrar el producto por su id.');
