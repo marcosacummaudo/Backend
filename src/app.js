@@ -32,6 +32,7 @@ app.use(session({
     // store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 600 }),
     secret: config.SECRET,
     resave: true,
+    // cookie: { secure: false }, // Ponlo en true si usas HTTPS
     saveUninitialized: true
 }));
 

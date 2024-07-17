@@ -3,6 +3,14 @@ import UsersService from '../services/Users.dao.MDB.js';
 
 const service = new UsersService();
 
+
+class UsersDTO {
+    constructor(user) {
+        const { password, ...filteredFoundUser } = user;
+        return filteredFoundUser;
+    }
+}
+
 class UsersManager {
     constructor() {
     }
@@ -14,7 +22,7 @@ class UsersManager {
             } else {
                 const users = await service.getOne( { email: userAdd.email } );
                 if (users) {
-                    return 1;
+                    return users;
                 } else {
                     const cartManager = new CartManagerDB();
                     const newCart = await cartManager.newCart();
@@ -38,6 +46,11 @@ class UsersManager {
             console.log(error);
         }
     }
+
+    async UsersDTO(user) {
+        const { password, ...filteredFoundUser } = user;
+        return filteredFoundUser;
+        }
 }
 
 export default UsersManager;

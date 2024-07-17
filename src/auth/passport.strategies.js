@@ -65,7 +65,9 @@ const initAuthStrategies = () => {
 
                         return done(null, process);
                     } else {
+
                         return done(null, foundUser);
+
                     }
                 } else {
                     return done(new Error('Faltan datos de perfil'), null);

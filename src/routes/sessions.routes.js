@@ -1,4 +1,5 @@
 import { Router } from 'express';
+//import { UsersManagerDB, UsersDTO} from '../controllers/UsersManagerDB.js';
 import UsersManagerDB from '../controllers/UsersManagerDB.js';
 import config from '../config.js';
 import passport from 'passport';
@@ -65,6 +66,9 @@ router.get('/ghlogin', passport.authenticate('ghlogin', {scope: ['user']}), asyn
 router.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect: `/login?error=${encodeURI('Error al identificar con Github')}`}), async (req, res) => {
     try {
         req.session.user = req.user // req.user es inyectado AUTOMATICAMENTE por Passport al parsear el done()
+
+        console.log('Usuario logueado req.session.user: ', req.session.user);
+
         req.session.save(err => {
             if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
         
@@ -98,7 +102,8 @@ router.get('/logout', async (req, res) => {
 
 router.get('/current', async (req, res) => {
     if(req.session.user) {
-        res.status(200).send({ status: 'Ok', payload: req.session.user });
+        const userFiltered = await manager.UsersDTO(req.session.user);
+        res.status(200).send({ status: 'Ok', payload: userFiltered });
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [] });
     }

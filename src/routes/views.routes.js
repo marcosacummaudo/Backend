@@ -1,6 +1,7 @@
 import { Router } from "express";
 import ProductManager from '../controllers/ProductManagerDB.js';
 import CartManager from '../controllers/CartManagerDB.js';
+import { handlePolicies } from '../utils.js';
 
 const router = Router();
 
@@ -35,7 +36,7 @@ router.get('/carts/:cid', async (req, res) => {
 });
 
 
-router.get('/chat', (req, res) => {    
+router.get('/chat', handlePolicies('user'), (req, res) => {    
     res.render('chat', {});    
 });
 

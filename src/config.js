@@ -24,7 +24,9 @@ const config = {
     MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
-    GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL
+    GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
+    GMAIL_APP_USER:'marcosacummaudo@gmail.com',
+    GMAIL_APP_PASS: process.env.GMAIL_APP_PASS,
 }
 
 export default config;

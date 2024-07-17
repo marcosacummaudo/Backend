@@ -1,10 +1,21 @@
 import { Router } from "express";
 import CartManager from '../controllers/CartManagerDB.js';
 import config from '../config.js';
+import nodemailer from 'nodemailer';
+import { handlePolicies } from '../utils.js';
 
 const router = Router();
 
 const manager = new CartManager();
+
+const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.GMAIL_APP_USER,
+        pass: config.GMAIL_APP_PASS
+    }
+});
 
 router.param('cid', async (req, res, next, id) => {
     if (!config.MONGODB_ID_REGEX.test(id)) {
@@ -12,7 +23,7 @@ router.param('cid', async (req, res, next, id) => {
     }
 
     next();
-})
+});
 
 router.param('pid', async (req, res, next, id) => {
     if (!config.MONGODB_ID_REGEX.test(id)) {
@@ -20,7 +31,22 @@ router.param('pid', async (req, res, next, id) => {
     }
 
     next();
-})
+});
+
+router.get('/mail', async (req, res) => {
+    try {
+        const confirmation = await transport.sendMail({
+            from: `Sistema Coder Marcos <${config.GMAIL_APP_USER}>`,
+            to: 'marcos.cummaudo@setupinformatica.com.ar',
+            subject: 'Pruebas Nodemailer',
+            html: '<h1>Prueba 01</h1>'
+        });
+        res.status(200).send({ status: 'OK', data: confirmation });
+    } catch (err) {
+        res.status(500).send({ status: 'ERR', data: err.message });
+    }
+});
+    
 
 router.post('/', async (req, res) => {
     const rta = await manager.newCart();
@@ -41,6 +67,7 @@ router.get('/:cid', async (req, res) => {
     }
 });
 
+//router.post('/:cid/product/:pid', handlePolicies('user'), async (req, res) => {
 router.post('/:cid/product/:pid', async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
@@ -115,6 +142,29 @@ router.delete('/:cid', async (req, res) => {
     } else {
         res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se vacio correctamente el carrito con id ${cid}. OK` });
     };
+});
+
+
+// Ruta para cerrar el ticket:
+//router.post('/:cid/purchase', handlePolicies('user'), async (req, res) => {
+router.post('/:cid/purchase', async (req, res) => {
+    const cid = req.params.cid;
+    //const pid = req.params.pid;
+    const cart = await manager.getCartById(cid);
+
+    const cartFiltered = await manager.punchaseCart(cart);
+    
+    console.log('Resultado EndPoint: ', cartFiltered);
+    
+    // if (rta === 0) {
+    //     res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
+    // } else {
+    //     if (rta === 1) {
+    //         res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe` });
+    //     } else {
+            res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se cerro correctamente el carrito con id ${cid} OK` });
+    //     }
+    // };
 });
 
 

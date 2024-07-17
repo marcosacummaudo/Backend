@@ -1,5 +1,6 @@
 import ProductManager from './ProductManagerDB.js';
 import CartsService from '../services/Cart.dao.MDB.js';
+import { v4 as uuidv4 } from 'uuid';
 
 const service = new CartsService();
 
@@ -42,7 +43,7 @@ class CartManager {
                 if (!prod) {
                     return 1 //No existe el producto
                 } else {
-                    const prodIndex = cart.products.findIndex(prod => String(prod._id) === String(pid));
+                    const prodIndex = cart.products.findIndex(prod => String(prod._id._id) === String(pid));
                     if (prodIndex === -1) {
                         const prodAdd = { _id: pid, quantity: 1}
                         cart.products.push(prodAdd);
@@ -129,6 +130,50 @@ class CartManager {
             }
         } catch (error) {
             console.log('Error al borrar los productos del carrito.');
+            console.log(error);
+        }
+    }
+
+    async punchaseCart(cart) {
+        try {
+            console.log('Carrito a cerrar', cart);
+            //console.log('Array de productos del carrito', cart.products);
+            let totalTicket = 0;
+            let cartUpdate = [];
+            for (let i = 0; i < cart.products.length; i++) {
+                if (cart.products[i]._id.stock >= cart.products[i].quantity) {
+                    console.log('Si alcanza', cart.products[i]);
+                    totalTicket =+ (cart.products[i].quantity * cart.products[i]._id.price);
+                    const prodManager = new ProductManager();
+                    const cantNewStock = cart.products[i]._id.stock - cart.products[i].quantity
+                    
+                    const prodEdit = await prodManager.updateProduct(cart.products[i]._id._id, { stock: cantNewStock } );
+                    
+                    cartUpdate = cart.products.splice(i, 1);
+                    i--; // Decrementar el índice para ajustar el desplazamiento del array
+                } else {
+                    console.log('No alcanza');
+                }
+            };
+
+            if (totalTicket > 0) {
+                console.log('req.session.user: ', req.session.user)
+                    
+                const ticket = {
+                    code: uuidv4(),
+                    amount: totalTicket,
+                    purchaser: 'ttttt'
+                }
+                
+                console.log('Ticket: ', ticket);            
+            }
+            
+            const cartResult = await service.update(cart._id, cart);
+
+            return cartResult
+            
+        } catch (error) {
+            console.log('Error al borrar los productos del carrito ttttttttttttttttttttttt.');
             console.log(error);
         }
     }

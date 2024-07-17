@@ -1,5 +1,7 @@
 import { Router } from "express";
 import ProductManagerDB from '../controllers/ProductManagerDB.js';
+//import { verifyToken, handlePolicies } from '../utils.js';
+import { handlePolicies } from '../utils.js';
 
 const router = Router();
 
@@ -37,7 +39,7 @@ router.get('/:pid', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', handlePolicies(['admin']), async (req, res) => {
     const socketServer = req.app.get('socketServer');
     const prodAdd = req.body;
     const rta = await manager.addProduct(prodAdd);
@@ -45,7 +47,7 @@ router.post('/', async (req, res) => {
     socketServer.emit('newProduct', rta);
 });
 
-router.put('/:pid', async (req, res) => {
+router.put('/:pid', handlePolicies('admin'), async (req, res) => {
     const pid = req.params.pid;
     const prodUp = req.body;
     const rta = await manager.updateProduct(pid, prodUp);
@@ -56,7 +58,7 @@ router.put('/:pid', async (req, res) => {
     };
 });
 
-router.delete('/:pid', async (req, res) => {
+router.delete('/:pid', handlePolicies('admin'), async (req, res) => {
     const socketServer = req.app.get('socketServer');
     const pid = req.params.pid;
     const rta = await manager.deleteProduct(pid);
