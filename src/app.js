@@ -35,20 +35,20 @@ app.use(session({
     // cookie: { secure: false }, // Ponlo en true si usas HTTPS
     saveUninitialized: true
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${config.DIRNAME}/views`);
 app.set('view engine', 'handlebars');
 
 app.use('/', viewsRouter);
+app.use('/api/sessions', sessionRouter);
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/sessions', sessionRouter);
 
 app.use('/static', express.static(`${config.DIRNAME}/public`));
 

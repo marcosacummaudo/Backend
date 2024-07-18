@@ -67,8 +67,8 @@ router.get('/:cid', async (req, res) => {
     }
 });
 
-//router.post('/:cid/product/:pid', handlePolicies('user'), async (req, res) => {
-router.post('/:cid/product/:pid', async (req, res) => {
+router.post('/:cid/product/:pid', handlePolicies('user', 'self'), async (req, res) => {
+//router.post('/:cid/product/:pid', async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
     const rta = await manager.addToCart(cid,pid);
@@ -144,27 +144,18 @@ router.delete('/:cid', async (req, res) => {
     };
 });
 
-
 // Ruta para cerrar el ticket:
-//router.post('/:cid/purchase', handlePolicies('user'), async (req, res) => {
-router.post('/:cid/purchase', async (req, res) => {
+router.post('/:cid/purchase', handlePolicies('user'), async (req, res) => {
+//router.post('/:cid/purchase', async (req, res) => {
     const cid = req.params.cid;
     //const pid = req.params.pid;
     const cart = await manager.getCartById(cid);
-
-    const cartFiltered = await manager.punchaseCart(cart);
-    
-    console.log('Resultado EndPoint: ', cartFiltered);
-    
-    // if (rta === 0) {
-    //     res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
-    // } else {
-    //     if (rta === 1) {
-    //         res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe` });
-    //     } else {
-            res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se cerro correctamente el carrito con id ${cid} OK` });
-    //     }
-    // };
+    if(cart) {
+        const cartFiltered = await manager.punchaseCart(cart);
+        res.status(200).send({ status: 'Ok', payload: cartFiltered, mensaje: `Se cerro correctamente el carrito con id ${cid} OK` });
+    } else {
+        res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito buscado con id ${cid} no existe` });
+    }
 });
 
 

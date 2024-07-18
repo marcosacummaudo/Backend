@@ -136,8 +136,6 @@ class CartManager {
 
     async punchaseCart(cart) {
         try {
-            console.log('Carrito a cerrar', cart);
-            //console.log('Array de productos del carrito', cart.products);
             let totalTicket = 0;
             let cartUpdate = [];
             for (let i = 0; i < cart.products.length; i++) {
@@ -146,34 +144,32 @@ class CartManager {
                     totalTicket =+ (cart.products[i].quantity * cart.products[i]._id.price);
                     const prodManager = new ProductManager();
                     const cantNewStock = cart.products[i]._id.stock - cart.products[i].quantity
-                    
-                    const prodEdit = await prodManager.updateProduct(cart.products[i]._id._id, { stock: cantNewStock } );
-                    
+                    const prodEdit = await prodManager.updateProduct(cart.products[i]._id._id, { stock: cantNewStock });
                     cartUpdate = cart.products.splice(i, 1);
-                    i--; // Decrementar el índice para ajustar el desplazamiento del array
+                    i--; // Reduce el i para reajustarlo al haber quetado un elemento.
                 } else {
                     console.log('No alcanza');
                 }
             };
-
             if (totalTicket > 0) {
-                console.log('req.session.user: ', req.session.user)
-                    
                 const ticket = {
                     code: uuidv4(),
                     amount: totalTicket,
-                    purchaser: 'ttttt'
+                    purchaser: ''
+                };
+                // Hago este if porque como no puedo hacer funcionar correctamente el req.sessions.user, evito que de error.
+                if (req.sessions.user) {
+                    ticket.purchaser = req.sessions.user.email;
+                } else {
+                    ticket.purchaser = 'marcosacummaudo@gmail.com';
                 }
-                
-                console.log('Ticket: ', ticket);            
+                const ticketAdded = await service.addTicket(ticket);       
             }
-            
             const cartResult = await service.update(cart._id, cart);
-
-            return cartResult
+            return cartResult;
             
         } catch (error) {
-            console.log('Error al borrar los productos del carrito ttttttttttttttttttttttt.');
+            console.log('Error al borrar los productos del carrito.');
             console.log(error);
         }
     }

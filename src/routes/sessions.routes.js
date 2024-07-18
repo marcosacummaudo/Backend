@@ -12,11 +12,17 @@ const manager = new UsersManagerDB();
 
 initAuthStrategies();
 
-const adminAuth = (req, res, next) => {
+export const adminAuth = (req, res, next) => {
     if (!req.session.user || req.session.user.role !== 'admin')
         return res.status(401).send({ origin: config.SERVER, payload: 'Acceso no autorizado: se requiere autenticación y nivel de admin' });
     next();
 };
+
+// export const userAuth = (req, res, next) => {
+//     if (!req.session.user || req.session.user.role !== 'user')
+//         return res.status(401).send({ origin: config.SERVER, payload: 'Acceso no autorizado: se requiere autenticación y nivel de user' });
+//     next();
+// };
 
 router.get('/hash/:password', async (req, res) => {
     res.status(200).send({ origin: config.SERVER, payload: createHash(req.params.password) });
