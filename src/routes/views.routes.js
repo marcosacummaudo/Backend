@@ -1,7 +1,8 @@
 import { Router } from "express";
 import ProductManager from '../controllers/ProductManagerDB.js';
 import CartManager from '../controllers/CartManagerDB.js';
-import { handlePolicies } from '../utils.js';
+//import { handlePolicies } from '../utils.js';
+import { handlePolicies, generateFakeProducts } from '../utils.js';
 
 const router = Router();
 
@@ -54,6 +55,13 @@ router.get('/login', (req, res) => {
 router.get('/profile', (req, res) => {
     if (!req.session.user) return res.redirect('/login');
     res.render('profile', { user: req.session.user });
+});
+
+//router.get('/mockingproducts/:qty', async (req, res) => {
+router.get('/mockingproducts', async (req, res) => {
+    //const data = await generateFakeUsers(parseInt(req.params.qty));
+    const data = await generateFakeProducts(parseInt(100));
+    res.status(200).send({ status: 'OK', payload: data });
 });
 
 
