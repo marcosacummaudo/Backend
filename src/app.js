@@ -18,6 +18,8 @@ import sessionRouter from './routes/sessions.routes.js';
 import cors from 'cors';
 import MongoSingleton from './services/mongo.singleton.js';
 
+import errorsHandler from './services/errors.handler.js';
+
 const app = express();
 
 app.use(cors({ origin: '*' }));
@@ -38,7 +40,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${config.DIRNAME}/views`);
 app.set('view engine', 'handlebars');
@@ -51,6 +52,8 @@ app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter);
 
 app.use('/static', express.static(`${config.DIRNAME}/public`));
+
+app.use(errorsHandler);
 
 const httpServer = app.listen(config.PORT, async () => {
 

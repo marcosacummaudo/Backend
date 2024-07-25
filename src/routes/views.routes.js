@@ -57,6 +57,7 @@ router.get('/profile', (req, res) => {
     res.render('profile', { user: req.session.user });
 });
 
+// Dejo comentada la posibilidad de que funcione con un parametro de cantidad de productos a generar.
 //router.get('/mockingproducts/:qty', async (req, res) => {
 router.get('/mockingproducts', async (req, res) => {
     //const data = await generateFakeUsers(parseInt(req.params.qty));

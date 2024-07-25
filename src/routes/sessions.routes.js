@@ -1,5 +1,4 @@
 import { Router } from 'express';
-//import { UsersManagerDB, UsersDTO} from '../controllers/UsersManagerDB.js';
 import UsersManagerDB from '../controllers/UsersManagerDB.js';
 import config from '../config.js';
 import passport from 'passport';
@@ -17,12 +16,6 @@ export const adminAuth = (req, res, next) => {
         return res.status(401).send({ origin: config.SERVER, payload: 'Acceso no autorizado: se requiere autenticación y nivel de admin' });
     next();
 };
-
-// export const userAuth = (req, res, next) => {
-//     if (!req.session.user || req.session.user.role !== 'user')
-//         return res.status(401).send({ origin: config.SERVER, payload: 'Acceso no autorizado: se requiere autenticación y nivel de user' });
-//     next();
-// };
 
 router.get('/hash/:password', async (req, res) => {
     res.status(200).send({ origin: config.SERVER, payload: createHash(req.params.password) });
@@ -72,8 +65,6 @@ router.get('/ghlogin', passport.authenticate('ghlogin', {scope: ['user']}), asyn
 router.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect: `/login?error=${encodeURI('Error al identificar con Github')}`}), async (req, res) => {
     try {
         req.session.user = req.user // req.user es inyectado AUTOMATICAMENTE por Passport al parsear el done()
-
-        console.log('Usuario logueado req.session.user: ', req.session.user);
 
         req.session.save(err => {
             if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });

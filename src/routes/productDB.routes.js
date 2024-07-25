@@ -1,18 +1,23 @@
 import { Router } from "express";
 import ProductManagerDB from '../controllers/ProductManagerDB.js';
-//import { verifyToken, handlePolicies } from '../utils.js';
+import config from '../config.js';
 import { handlePolicies } from '../utils.js';
+import CustomError from "../services/CustomError.class.js";
+import { errorsDictionary } from "../config.js";
 
 const router = Router();
 
 const manager = new ProductManagerDB();
 
 router.param('id', async (req, res, next, id) => {
-    if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
-        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    try {
+        if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
+            throw new CustomError(errorsDictionary.INVALID_ID_PROD);
+        }
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    next();
 })
 
 router.get('/', async (req, res) => {
@@ -29,9 +34,9 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get('/:pid', async (req, res) => {
-    const pid = req.params.pid;
-    const product = await manager.getOneProduct( { _id: pid } );
+router.get('/:id', async (req, res) => {
+    const id = req.params.id;
+    const product = await manager.getOneProduct( { _id: id } );
     if(product !== undefined) {
         res.status(200).send({ status: 'Ok', payload: product });
     } else {
@@ -47,22 +52,22 @@ router.post('/', handlePolicies(['admin']), async (req, res) => {
     socketServer.emit('newProduct', rta);
 });
 
-router.put('/:pid', handlePolicies('admin'), async (req, res) => {
-    const pid = req.params.pid;
+router.put('/:id', handlePolicies('admin'), async (req, res) => {
+    const id = req.params.id;
     const prodUp = req.body;
-    const rta = await manager.updateProduct(pid, prodUp);
+    const rta = await manager.updateProduct(id, prodUp);
     if (rta === 0) {
-        res.status(200).send({ status: 'Ok', payload: prodUp, mensaje: `Producto con id ${pid}, fue modificado.` });
+        res.status(200).send({ status: 'Ok', payload: prodUp, mensaje: `Producto con id ${id}, fue modificado.` });
     } else {
-        res.status(400).send({ status: 'Not Ok', payload: [], error: `No se encontro el producto con id ${pid} para ser editado.` });
+        res.status(400).send({ status: 'Not Ok', payload: [], error: `No se encontro el producto con id ${id} para ser editado.` });
     };
 });
 
-router.delete('/:pid', handlePolicies('admin'), async (req, res) => {
+router.delete('/:id', handlePolicies('admin'), async (req, res) => {
     const socketServer = req.app.get('socketServer');
-    const pid = req.params.pid;
-    const rta = await manager.deleteProduct(pid);
-    res.status(200).send({ status: 'Ok', payload: [], mensaje: `Producto con id ${pid}, fue borrado.` });
+    const id = req.params.id;
+    const rta = await manager.deleteProduct(id);
+    res.status(200).send({ status: 'Ok', payload: [], mensaje: `Producto con id ${id}, fue borrado.` });
     const prodRender = await manager.getProducts(0);
     socketServer.emit('deleteProduct', prodRender);
 });

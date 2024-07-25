@@ -3,6 +3,8 @@ import CartManager from '../controllers/CartManagerDB.js';
 import config from '../config.js';
 import nodemailer from 'nodemailer';
 import { handlePolicies } from '../utils.js';
+import CustomError from "../services/CustomError.class.js";
+import { errorsDictionary } from "../config.js";
 
 const router = Router();
 
@@ -18,19 +20,25 @@ const transport = nodemailer.createTransport({
 });
 
 router.param('cid', async (req, res, next, id) => {
-    if (!config.MONGODB_ID_REGEX.test(id)) {
-        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id de carrito no válido' });
+    try {
+        if (!config.MONGODB_ID_REGEX.test(id)) {
+            throw new CustomError(errorsDictionary.INVALID_ID_CART);
+        }
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    next();
 });
 
 router.param('pid', async (req, res, next, id) => {
-    if (!config.MONGODB_ID_REGEX.test(id)) {
-        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id de producto no válido' });
+    try {
+        if (!config.MONGODB_ID_REGEX.test(id)) {
+            throw new CustomError(errorsDictionary.INVALID_ID_PROD);
+        }
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    next();
 });
 
 router.get('/mail', async (req, res) => {
@@ -68,7 +76,6 @@ router.get('/:cid', async (req, res) => {
 });
 
 router.post('/:cid/product/:pid', handlePolicies('user', 'self'), async (req, res) => {
-//router.post('/:cid/product/:pid', async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
     const rta = await manager.addToCart(cid,pid);
@@ -146,9 +153,7 @@ router.delete('/:cid', async (req, res) => {
 
 // Ruta para cerrar el ticket:
 router.post('/:cid/purchase', handlePolicies('user'), async (req, res) => {
-//router.post('/:cid/purchase', async (req, res) => {
     const cid = req.params.cid;
-    //const pid = req.params.pid;
     const cart = await manager.getCartById(cid);
     if(cart) {
         const cartFiltered = await manager.punchaseCart(cart);
