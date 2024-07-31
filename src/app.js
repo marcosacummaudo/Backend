@@ -17,7 +17,7 @@ import cookieParser from 'cookie-parser';
 import sessionRouter from './routes/sessions.routes.js';
 import cors from 'cors';
 import MongoSingleton from './services/mongo.singleton.js';
-
+import addLogger from './services/logger.js';
 import errorsHandler from './services/errors.handler.js';
 
 const app = express();
@@ -34,7 +34,6 @@ app.use(session({
     // store: MongoStore.create({ mongoUrl: config.MONGODB_URI, ttl: 600 }),
     secret: config.SECRET,
     resave: true,
-    // cookie: { secure: false }, // Ponlo en true si usas HTTPS
     saveUninitialized: true
 }));
 app.use(passport.initialize());
@@ -43,6 +42,8 @@ app.use(passport.session());
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${config.DIRNAME}/views`);
 app.set('view engine', 'handlebars');
+
+app.use(addLogger);
 
 app.use('/', viewsRouter);
 app.use('/api/sessions', sessionRouter);

@@ -9,6 +9,8 @@ const router = Router();
 
 const manager = new ProductManagerDB();
 
+const routeUrl = '/api/products'
+
 router.param('id', async (req, res, next, id) => {
     try {
         if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
@@ -28,8 +30,11 @@ router.get('/', async (req, res) => {
     const products = await manager.getProducts(limit, page, sort, query);
     if(products) {
         res.status(200).send({ status: 'Ok', payload: products });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [] });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     }
 });
 
@@ -39,8 +44,10 @@ router.get('/:id', async (req, res) => {
     const product = await manager.getOneProduct( { _id: id } );
     if(product !== undefined) {
         res.status(200).send({ status: 'Ok', payload: product });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [], error: 'El producto buscado no existe.' });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     }
 });
 
@@ -49,6 +56,7 @@ router.post('/', handlePolicies(['admin']), async (req, res) => {
     const prodAdd = req.body;
     const rta = await manager.addProduct(prodAdd);
     res.status(200).send({ status: 'Ok', payload: rta, mensaje: `Producto con código ${rta.code}, agregado OK` });
+    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     socketServer.emit('newProduct', rta);
 });
 
@@ -58,8 +66,10 @@ router.put('/:id', handlePolicies('admin'), async (req, res) => {
     const rta = await manager.updateProduct(id, prodUp);
     if (rta === 0) {
         res.status(200).send({ status: 'Ok', payload: prodUp, mensaje: `Producto con id ${id}, fue modificado.` });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `No se encontro el producto con id ${id} para ser editado.` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     };
 });
 
@@ -68,12 +78,14 @@ router.delete('/:id', handlePolicies('admin'), async (req, res) => {
     const id = req.params.id;
     const rta = await manager.deleteProduct(id);
     res.status(200).send({ status: 'Ok', payload: [], mensaje: `Producto con id ${id}, fue borrado.` });
+    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     const prodRender = await manager.getProducts(0);
     socketServer.emit('deleteProduct', prodRender);
 });
 
 router.all('*', async (req, res) => {
-    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' }); 
+    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' });
+    req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
 });
 
 export default router;

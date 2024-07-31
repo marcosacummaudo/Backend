@@ -9,6 +9,8 @@ const router = Router();
 
 const manager = new UsersManagerDB();
 
+const routeUrl = '/api/sessions'
+
 initAuthStrategies();
 
 export const adminAuth = (req, res, next) => {
@@ -19,6 +21,7 @@ export const adminAuth = (req, res, next) => {
 
 router.get('/hash/:password', async (req, res) => {
     res.status(200).send({ origin: config.SERVER, payload: createHash(req.params.password) });
+    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
 });
 
 router.post('/register', async (req, res) => {
@@ -34,13 +37,16 @@ router.post('/login', verifyRequiredBody(['email', 'password']), async (req, res
             req.session.user = filteredUser;
             req.session.save(err => {
                 if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+                req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
                 res.redirect('/products');
             });
         } else {
             res.status(401).send({ origin: config.SERVER, payload: 'Datos de acceso no válidos' });
+            req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
         }
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | error: ${err.message}`);
     }
 });
 
@@ -55,6 +61,7 @@ router.post('/pplogin', verifyRequiredBody(['email', 'password']), passport.auth
         });
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | error: ${err.message}`);
     }
 });
 
@@ -73,6 +80,7 @@ router.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect
         });
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | error: ${err.message}`);
     }
 });
 
@@ -80,8 +88,10 @@ router.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect
 router.get('/private', adminAuth, async (req, res) => {
     try {
         res.status(200).send({ origin: config.SERVER, payload: 'Bienvenido ADMIN!' });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | error: ${err.message}`);
     }
 });
 
@@ -93,6 +103,7 @@ router.get('/logout', async (req, res) => {
         });
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | error: ${err.message}`);
     }
 });
 
@@ -101,14 +112,17 @@ router.get('/current', async (req, res) => {
     if(req.session.user) {
         const userFiltered = await manager.UsersDTO(req.session.user);
         res.status(200).send({ status: 'Ok', payload: userFiltered });
+        req.logger.fatal(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [] });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     }
 });
 
 
 router.all('*', async (req, res) => {
-    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' }); 
+    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' });
+    req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
 });
 
 export default router;

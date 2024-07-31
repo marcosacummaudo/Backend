@@ -14,6 +14,7 @@ const clOptions = commandLine.opts();
 const config = {
     SERVER: 'atlas',
     PORT: process.env.PORT || clOptions.port || 8080,
+    MODO: process.env.MODO || 'prod',
     APP_NAME: 'marcosacummaudo',
     //DIRNAME: url.fileURLToPath(new URL('.', import.meta.url)),
     DIRNAME: path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, '$1')), // Win

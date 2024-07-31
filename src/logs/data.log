@@ -1,0 +1,52 @@
+{"level":"http","message":"Mon Jul 29 2024 GET /login"}
+{"level":"http","message":"Mon Jul 29 2024 GET /static/css/index.css"}
+{"level":"http","message":"Mon Jul 29 2024 GET /static/img/LogoGOAT.png"}
+{"level":"http","message":"Mon Jul 29 2024 GET /static/img/LogoIcono.ico"}
+[31mfatal[39m: Mon Jul 29 2024 GET /login
+[31mfatal[39m: Mon Jul 29 2024 GET /static/css/index.css
+[31mfatal[39m: Mon Jul 29 2024 GET /static/img/LogoGOAT.png
+[31mfatal[39m: Mon Jul 29 2024 GET /static/img/LogoIcono.ico
+fatal: Mon Jul 29 2024 GET /login
+fatal: Mon Jul 29 2024 GET /static/css/index.css
+fatal: Mon Jul 29 2024 GET /static/img/LogoGOAT.png
+fatal: Mon Jul 29 2024 GET /static/img/LogoIcono.ico
+fatal: Mon Jul 29 2024 GET /login
+fatal: Mon Jul 29 2024 GET /static/css/index.css
+fatal: Mon Jul 29 2024 GET /static/img/LogoGOAT.png
+fatal: Mon Jul 29 2024 GET /static/img/LogoIcono.ico
+fatal: Mon Jul 29 2024 GET /login
+fatal: Mon Jul 29 2024 GET /static/css/index.css
+fatal: Mon Jul 29 2024 GET /static/img/LogoGOAT.png
+fatal: Mon Jul 29 2024 GET /static/img/LogoIcono.ico
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggertest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /api/sessions/current | user: [object Object]
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /api/sessions/current | user: [object Object]
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /api/sessions/current | user: marcosacummaudo@gmail.com
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 04:55:27 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+fatal: date: Wed Jul 31 2024 04:55:56 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 04:55:56 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 05:02:16 | method: GET | ip: ::1 | url: /api/sessions/current
+fatal: date: Wed Jul 31 2024 05:02:23 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Jul 31 2024 05:02:23 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined

@@ -10,6 +10,8 @@ const router = Router();
 
 const manager = new CartManager();
 
+const routeUrl = '/api/carts'
+
 const transport = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
@@ -50,8 +52,10 @@ router.get('/mail', async (req, res) => {
             html: '<h1>Prueba 01</h1>'
         });
         res.status(200).send({ status: 'OK', data: confirmation });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } catch (err) {
         res.status(500).send({ status: 'ERR', data: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | error: ${err.message}`);
     }
 });
     
@@ -60,8 +64,10 @@ router.post('/', async (req, res) => {
     const rta = await manager.newCart();
     if (rta) {
         res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se creo un nuevo carrito con id ${rta._id} OK` });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [], error: 'No se pudo crear un nuevo carrito.' });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     }
 });
 
@@ -70,8 +76,10 @@ router.get('/:cid', async (req, res) => {
     const cart = await manager.getCartById(cid);
     if(cart) {
         res.status(200).send({ status: 'Ok', payload: cart });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito buscado con id ${cid} no existe` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     }
 });
 
@@ -81,27 +89,33 @@ router.post('/:cid/product/:pid', handlePolicies('user', 'self'), async (req, re
     const rta = await manager.addToCart(cid,pid);
     if (rta === 0) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     } else {
         if (rta === 1) {
             res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe` });
+            req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
         } else {
             res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se agrego el producto con id ${pid} al carrito con id ${cid} OK` });
+            req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
         }
     };
 });
 
 
-router.delete('/:cid/product/:pid', async (req, res) => {
+router.delete('/:cid/product/:pid',  handlePolicies('user', 'self'), async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
     const rta = await manager.deleteToCart(cid,pid);
     if (rta === 0) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     } else {
         if (rta === 1) {
             res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe en el carrito con id ${cid}.` });
+            req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
         } else {
             res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se elimino el producto con id ${pid} al carrito con id ${cid}. OK` });
+            req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
         }
     };
 });
@@ -114,8 +128,10 @@ router.put('/:cid', async (req, res) => {
     const rta = await manager.updateProductsToCart(cid,prodUp);
     if (rta === 0) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
         res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se modifico el carrito con id ${cid} con el array de productos ${prodUp}. OK` });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     };
 });
 
@@ -126,15 +142,19 @@ router.put('/:cid/product/:pid', async (req, res) => {
     const quantityUp = +req.body.quantity;
     if (quantityUp <= 0 || isNaN(quantityUp)) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `Se requiere una cantidad numérico mayor a 0.` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
         const rta = await manager.updateQuantityProdToCart(cid,pid,quantityUp);
         if (rta === 0) {
             res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
+            req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
         } else {
             if (rta === 1) {
                 res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe en el carrito con id ${cid}.` });
+                req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
             } else {
                 res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se actualizo a ${quantityUp} la cantidad del producto con id ${pid} en el carrito con id ${cid}. OK` });
+                req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
             }
         };
 
@@ -146,8 +166,10 @@ router.delete('/:cid', async (req, res) => {
     const rta = await manager.deleteAllProdToCart(cid);
     if (rta === 0) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
         res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se vacio correctamente el carrito con id ${cid}. OK` });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     };
 });
 
@@ -158,14 +180,17 @@ router.post('/:cid/purchase', handlePolicies('user'), async (req, res) => {
     if(cart) {
         const cartFiltered = await manager.punchaseCart(cart);
         res.status(200).send({ status: 'Ok', payload: cartFiltered, mensaje: `Se cerro correctamente el carrito con id ${cid} OK` });
+        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito buscado con id ${cid} no existe` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     }
 });
 
 
 router.all('*', async (req, res) => {
-    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' }); 
+    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' });
+    req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
 });
 
 export default router;
