@@ -48,6 +48,7 @@ export const errorsDictionary = {
     INVALID_LOGIN: { code: 13, status: 401, message: 'Usuario no autenticado' },
     INVALID_ID_PROD: { code: 14, status: 400, message: 'Id de producto no válido' },
     INVALID_ID_CART: { code: 15, status: 400, message: 'Id de carrito no válido' },
+    INVALID_ID_USER: { code: 16, status: 400, message: 'Id de usuario no válido' },
 }
 
 

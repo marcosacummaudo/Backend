@@ -107,7 +107,6 @@ router.get('/logout', async (req, res) => {
     }
 });
 
-
 router.get('/current', async (req, res) => {
     if(req.session.user) {
         const userFiltered = await manager.UsersDTO(req.session.user);

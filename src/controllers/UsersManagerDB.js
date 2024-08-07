@@ -47,6 +47,16 @@ class UsersManager {
         }
     }
 
+    async getUserById(id) {
+        try {
+            const user = await service.getOne({ _id: id });
+            return user;
+        } catch (error) {
+            console.log('Error al buscar un usuario por su email.');
+            console.log(error);
+        }
+    }
+
     async UsersDTO(user) {
         const { password, ...filteredFoundUser } = user;
         return filteredFoundUser;

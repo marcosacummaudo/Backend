@@ -50,3 +50,6 @@ error: date: Wed Jul 31 2024 04:55:56 | method: GET | ip: ::1 | url: /views/logg
 error: date: Wed Jul 31 2024 05:02:16 | method: GET | ip: ::1 | url: /api/sessions/current
 fatal: date: Wed Jul 31 2024 05:02:23 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
 error: date: Wed Jul 31 2024 05:02:23 | method: GET | ip: ::1 | url: /views/loggerTest | user: undefined
+error: date: Wed Aug 07 2024 04:54:09 | method: POST | ip: ::1 | url: /api/sessions/resetpass
+error: date: Wed Aug 07 2024 04:57:35 | method: POST | ip: ::1 | url: /api/users/resetpass | error: confirmation is not defined
+error: date: Wed Aug 07 2024 04:59:32 | method: POST | ip: ::1 | url: /api/users/resetpass | error: confirmation is not defined

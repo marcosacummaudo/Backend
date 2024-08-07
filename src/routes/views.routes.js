@@ -2,7 +2,11 @@ import { Router } from "express";
 import ProductManager from '../controllers/ProductManagerDB.js';
 import CartManager from '../controllers/CartManagerDB.js';
 //import { handlePolicies } from '../utils.js';
+import config from '../config.js';
 import { handlePolicies, generateFakeProducts } from '../utils.js';
+import UsersManagerDB from '../controllers/UsersManagerDB.js';
+import CustomError from "../services/CustomError.class.js";
+import { errorsDictionary } from "../config.js";
 
 const router = Router();
 
@@ -10,7 +14,20 @@ const manager = new ProductManager();
 
 const managerCart = new CartManager();
 
+const managerUser = new UsersManagerDB();
+
 const routeUrl = '/views'
+
+router.param('uid', async (req, res, next, id) => {
+    try {
+        if (!config.MONGODB_ID_REGEX.test(id)) {
+            throw new CustomError(errorsDictionary.INVALID_ID_USER);
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
 
 router.get('/', async (req, res) => {
     const limit = +req.query.limit || 10;
@@ -50,6 +67,28 @@ router.get('/chat', handlePolicies('user'), (req, res) => {
 
 router.get('/register', (req, res) => {
     res.render('register', {});
+});
+
+router.get('/resetPass', (req, res) => {
+    res.render('resetPass', {});
+});
+
+router.get('/insertPass/:uid', async (req, res) => {
+    const uid = req.params.uid;
+
+    console.log('id Usario: ', uid)
+
+    //const { email } = req.body;
+    const foundUser = await managerUser.getUserById( uid );
+
+    console.log('Usario Encontrado: ', foundUser)
+    if (foundUser) {   
+        
+        res.render('insertPass', { mail: foundUser.mail, userId: foundUser._id });
+
+    }     
+
+
 });
 
 

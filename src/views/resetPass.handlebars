@@ -1,0 +1,96 @@
+<style>
+
+    .register-container {
+        max-width: 360px;
+        margin: auto;
+        margin-top: 64px;
+        padding: 32px;
+        border-radius: 0.5em;
+        color: #333;
+        border: 1px solid #bbb;
+        background-color: #ccc;
+    }
+    
+    .btn-100 {
+        width: 100%;
+        margin-bottom: 0.5em;
+    }
+
+    .a2 {
+        color: #333;
+    }
+
+    .a2:hover {
+        color: #000;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+
+<div class="register-container">
+    <h1 class="text-center"><img src="static/img/LogoGOAT.png" alt="Logo" width="80" height="80"></h1>
+    <h1 class="text-center"><b>GOAT</b></h1>
+    <h2><b>Reset Password</b></h2>
+    <form id="resetPassForm" style="margin-top: 32px;">
+
+        <div class="input-group" style="width: 100%; margin-bottom: 8px;">
+            <span class="input-group-text" id="group3"><i class="fa-solid fa-envelope"></i></span>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Ingrese su Email" required="required" autocomplete="email">
+        </div>
+
+        <button type="submit" class="btn btn-success btn-100">Reset Password</button>
+        
+        <div style="margin-top: 24px;">
+            Recordaste tu password?: <a class="a2" href="/login">Volver</a>
+        </div>
+    </form>
+</div>
+
+<script type="module">
+
+    resetPassForm.addEventListener('submit', async (evt) => {
+        evt.preventDefault();
+        const email = document.getElementById('email').value;
+
+        try {
+                const process = await fetch(`/api/users/resetpass`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const result = await process.json();
+
+                console.log('Process: ', process);
+
+                if (process.ok) {
+                    Swal.fire({
+                        title: 'Se envio un mail para resetear su password',
+                        text: result.mensaje,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        registerUserForm.reset();
+                        window.location.href = '/login';
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: result.error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al registrar el usuario.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+    });
+
+
+</script>
