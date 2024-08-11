@@ -1,12 +1,28 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { faker } from '@faker-js/faker';
 import CustomError from './services/CustomError.class.js';
 import { errorsDictionary } from './config.js';
+import config from './config.js';
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
 export const isValidPassword = (passwordToVerify, storedHash) => bcrypt.compareSync(passwordToVerify, storedHash);
 
+export const createToken = (payload, duration) => jwt.sign(payload, config.SECRET, { expiresIn: duration });
+
+export const verifyToken = (req, res, next) => {
+    const headerToken = req.headers.authorization ? req.headers.authorization.split(' ')[1]: undefined;
+    const cookieToken = req.cookies && req.cookies[`${config.APP_NAME}_cookie`] ? req.cookies[`${config.APP_NAME}_cookie`]: undefined;
+    const queryToken = req.query.access_token ? req.query.access_token: undefined;
+    const receivedToken = headerToken || cookieToken || queryToken;
+    if (!receivedToken) return res.render('resetPass', { notToken: true });
+    jwt.verify(receivedToken, config.SECRET, (err, payload) => {
+        if (err) return res.status(403).send({ origin: config.SERVER, payload: 'Token no válido' });
+        req.user = payload;
+        next();
+    });
+}
 
 export const verifyRequiredBody = (requiredFields) => {
     return (req, res, next) => {

@@ -29,9 +29,10 @@
 
 
 <div class="register-container">
-    <h1 class="text-center"><img src="static/img/LogoGOAT.png" alt="Logo" width="80" height="80"></h1>
+    <h1 class="text-center"><img src="/static/img/LogoGOAT.png" alt="Logo" width="80" height="80"></h1>
     <h1 class="text-center"><b>GOAT</b></h1>
     <h2><b>Reset Password</b></h2>
+    <p>User: {{user.email}}</p>
     <form id="insertPassForm" style="margin-top: 32px;">
         <div class="input-group" style="width: 100%; margin-bottom: 32px;">
             <span class="input-group-text" id="group5"><i class="fa-solid fa-lock"></i></span>
@@ -42,7 +43,6 @@
             <input type="password" id="confirmPassword" name="password" class="form-control" required="required" placeholder="Repita su nueva password" autocomplete="password">
         </div>
         <button type="submit" class="btn btn-success btn-100">Reset Password</button>
-        
         <div style="margin-top: 24px;">
             Recordaste tu password?: <a class="a2" href="/login">Volver</a>
         </div>
@@ -53,56 +53,45 @@
 
     insertPassForm.addEventListener('submit', async (evt) => {
         evt.preventDefault();
-        //const pass = document.getElementById('password').value;
-        var newPassword = document.getElementById('newPassword').value;
+        var password = document.getElementById('newPassword').value;
         var confirmPassword = document.getElementById('confirmPassword').value;
+        const email = '{{user.email}}';
 
         try {
-
-            console.log('newPassword: ', newPassword)
-
-            console.log('confirmPassword: ', confirmPassword)
-
-
-                if (newPassword !== confirmPassword) {
+                if (password !== confirmPassword) {
                     alert('Las contraseñas no coinciden. Por favor, intente de nuevo.');
                     return false;
-                } else {
-                    const process = await fetch(`/api/users`, {
+                };
+                const process = await fetch(`/api/users/insertNewPass`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, password })
                 });
-
                 const result = await process.json();
-                }
-
-                const result = await process.json();
-
-                console.log('Process: ', process);
-
                 if (process.ok) {
                     Swal.fire({
-                        title: 'Se envio un mail para resetear su password',
+                        title: 'Su password fue restaurada con éxito.',
                         text: result.mensaje,
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        registerUserForm.reset();
+                        insertPassForm.reset();
                         window.location.href = '/login';
                     });
                 } else {
                     Swal.fire({
-                        title: 'Error',
+                        title: 'Error: La contraseña no puede ser igual a la actual.',
                         text: result.error,
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
                 }
             } catch (error) {
+                console.log('error: ', error)
+
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un problema al registrar el usuario.',
+                    text: 'Hubo un problema al restaurar la password.',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });

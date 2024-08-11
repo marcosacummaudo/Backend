@@ -57,6 +57,22 @@ class UsersManager {
         }
     }
 
+    async update(user) {
+        try {
+            const foundUser = await service.getOne({ _id: user.foundUser._id });
+            if (!foundUser) {
+                return 0 //No exite el usuario
+            } else {
+                foundUser.password = user.password;
+                const userUpdate = await service.update(user.foundUser._id, foundUser);
+                return; //Se actualizo la password del usuario
+            }
+        } catch (error) {
+            console.log('Error al actualizar la password de un usuario.');
+            console.log(error);
+        }
+    }
+
     async UsersDTO(user) {
         const { password, ...filteredFoundUser } = user;
         return filteredFoundUser;

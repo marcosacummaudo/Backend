@@ -53,3 +53,10 @@ error: date: Wed Jul 31 2024 05:02:23 | method: GET | ip: ::1 | url: /views/logg
 error: date: Wed Aug 07 2024 04:54:09 | method: POST | ip: ::1 | url: /api/sessions/resetpass
 error: date: Wed Aug 07 2024 04:57:35 | method: POST | ip: ::1 | url: /api/users/resetpass | error: confirmation is not defined
 error: date: Wed Aug 07 2024 04:59:32 | method: POST | ip: ::1 | url: /api/users/resetpass | error: confirmation is not defined
+error: date: Fri Aug 09 2024 07:28:28 | method: POST | ip: ::1 | url: /api/users/resetpass | error: createToken is not defined
+error: date: Fri Aug 09 2024 07:28:39 | method: POST | ip: ::1 | url: /api/users/resetpass | error: createToken is not defined
+error: date: Fri Aug 09 2024 07:30:21 | method: POST | ip: ::1 | url: /api/users/resetpass | error: config is not defined
+error: date: Sun Aug 11 2024 01:48:15 | method: GET | ip: ::1 | url: /api/sessions/pplogin
+error: date: Sun Aug 11 2024 02:45:47 | method: POST | ip: ::1 | url: /api/users/insertNewPass
+error: date: Sun Aug 11 2024 02:48:31 | method: POST | ip: ::1 | url: /api/users/insertNewPass
+error: date: Sun Aug 11 2024 02:48:47 | method: POST | ip: ::1 | url: /api/users/insertNewPass

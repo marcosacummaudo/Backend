@@ -3,10 +3,13 @@ import ProductManager from '../controllers/ProductManagerDB.js';
 import CartManager from '../controllers/CartManagerDB.js';
 //import { handlePolicies } from '../utils.js';
 import config from '../config.js';
-import { handlePolicies, generateFakeProducts } from '../utils.js';
+import { handlePolicies, generateFakeProducts, verifyToken } from '../utils.js';
 import UsersManagerDB from '../controllers/UsersManagerDB.js';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
+
+
+//import { createHash, isValidPassword, createToken, verifyToken, verifyRequiredBody } from '../utils.js';
 
 const router = Router();
 
@@ -18,7 +21,7 @@ const managerUser = new UsersManagerDB();
 
 const routeUrl = '/views'
 
-router.param('uid', async (req, res, next, id) => {
+router.param('cid', async (req, res, next, id) => {
     try {
         if (!config.MONGODB_ID_REGEX.test(id)) {
             throw new CustomError(errorsDictionary.INVALID_ID_USER);
@@ -70,25 +73,15 @@ router.get('/register', (req, res) => {
 });
 
 router.get('/resetPass', (req, res) => {
-    res.render('resetPass', {});
+    //res.render('resetPass', {});
+    res.render('resetPass', { notToken: false });
 });
 
-router.get('/insertPass/:uid', async (req, res) => {
-    const uid = req.params.uid;
-
-    console.log('id Usario: ', uid)
-
-    //const { email } = req.body;
-    const foundUser = await managerUser.getUserById( uid );
-
-    console.log('Usario Encontrado: ', foundUser)
+router.get('/insertPass/:token', verifyToken, async (req, res) => {
+    const foundUser = await managerUser.getUserById( req.user._id );
     if (foundUser) {   
-        
-        res.render('insertPass', { mail: foundUser.mail, userId: foundUser._id });
-
+        res.render('insertPass', { user: foundUser });
     }     
-
-
 });
 
 

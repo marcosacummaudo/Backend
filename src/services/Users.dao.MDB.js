@@ -19,6 +19,14 @@ class UsersService {
             return err.message;
         };
     };
+
+    update = async (id, user) => {
+        try {
+            return await usersModel.findOneAndUpdate( { _id: id }, user, { new: true } );
+        } catch (err) {
+            return err.message;
+        };
+    };
 }
 
 export default UsersService;

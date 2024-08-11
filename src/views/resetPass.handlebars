@@ -29,18 +29,21 @@
 
 
 <div class="register-container">
-    <h1 class="text-center"><img src="static/img/LogoGOAT.png" alt="Logo" width="80" height="80"></h1>
+    <h1 class="text-center"><img src="/static/img/LogoGOAT.png" alt="Logo" width="80" height="80"></h1>
     <h1 class="text-center"><b>GOAT</b></h1>
     <h2><b>Reset Password</b></h2>
+    {{#if notToken}}
+        <div class="alert alert-danger" role="alert" style="margin-top: 16px;">
+            <p>El Token expiro!</p>
+            <p>Debe iniciar el proceso de nuevo.</p>
+        </div>
+    {{/if}}
     <form id="resetPassForm" style="margin-top: 32px;">
-
         <div class="input-group" style="width: 100%; margin-bottom: 8px;">
             <span class="input-group-text" id="group3"><i class="fa-solid fa-envelope"></i></span>
             <input type="email" id="email" name="email" class="form-control" placeholder="Ingrese su Email" required="required" autocomplete="email">
         </div>
-
         <button type="submit" class="btn btn-success btn-100">Reset Password</button>
-        
         <div style="margin-top: 24px;">
             Recordaste tu password?: <a class="a2" href="/login">Volver</a>
         </div>
@@ -59,11 +62,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
-
                 const result = await process.json();
-
-                console.log('Process: ', process);
-
                 if (process.ok) {
                     Swal.fire({
                         title: 'Se envio un mail para resetear su password',
@@ -71,7 +70,7 @@
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        registerUserForm.reset();
+                        resetPassForm.reset();
                         window.location.href = '/login';
                     });
                 } else {
