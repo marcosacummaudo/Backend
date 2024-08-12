@@ -68,9 +68,18 @@ router.post('/resetpass', verifyRequiredBody(['email']), async (req, res) => {
                 from: `Sistema Coder Marcos <${config.GMAIL_APP_USER}>`,
                 to: email,
                 subject: 'Reset Password',
-                html: `<h3>Link de recuperacion de password</h3> <br>
-                        <p>Ingrese a este link para reestablecer su password:</p>
-                        <p>http://localhost:8080/insertPass/${token}</p>`
+                html: `<div">
+                            <div>
+                                <h2>Recupera tu contraseña</h2>
+                                <p>Hola,</p>
+                                <p>Parece que solicitaste restablecer tu contraseña. Haz clic en el link de abajo para continuar con el proceso:</p>
+                                <p>
+                                    <a href="http://localhost:8080/insertPass/${token}" class="button">Restablecer contraseña</a>
+                                </p>
+                                <p>Si no solicitaste este cambio, simplemente ignora este correo electrónico.</p>
+                                <p>Muchas gracias.</p>
+                            </div>
+                        </div>`
             });
             res.status(200).send({ origin: config.SERVER, payload: process });
             req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
