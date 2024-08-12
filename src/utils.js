@@ -40,7 +40,7 @@ export const handlePolicies = policies => {
     return async (req, res, next) => {
         try {
             if (!req.session.user) throw new CustomError(errorsDictionary.INVALID_LOGIN);
-            if (policies.includes('self') && req.session.user.cart === req.params.id) return next();
+            if (policies.includes('self') && req.session.user.cart === req.params.cid) return next();
             if (policies.includes(req.session.user.role)) return next();
             throw new CustomError(errorsDictionary.USER_ACCESS);
         } catch (error) {

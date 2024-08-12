@@ -1,9 +1,11 @@
 import { Router } from "express";
 import ProductManagerDB from '../controllers/ProductManagerDB.js';
 import config from '../config.js';
-import { handlePolicies } from '../utils.js';
+import { handlePolicies, verifyRequiredBody } from '../utils.js';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
+
+//import { createHash, isValidPassword, createToken, verifyToken, verifyRequiredBody } from '../utils.js';
 
 const router = Router();
 
@@ -51,36 +53,57 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', handlePolicies(['admin']), async (req, res) => {
+router.post('/', handlePolicies(['admin','premium']), verifyRequiredBody(['title', 'description', 'price', 'code', 'stock', 'category']), async (req, res) => {
     const socketServer = req.app.get('socketServer');
     const prodAdd = req.body;
-    const rta = await manager.addProduct(prodAdd);
+    const user = req.session.user;
+    const rta = await manager.addProduct(prodAdd, user);
     res.status(200).send({ status: 'Ok', payload: rta, mensaje: `Producto con código ${rta.code}, agregado OK` });
     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     socketServer.emit('newProduct', rta);
 });
 
-router.put('/:id', handlePolicies('admin'), async (req, res) => {
+router.put('/:id', handlePolicies(['admin','premium']), async (req, res) => {
     const id = req.params.id;
     const prodUp = req.body;
-    const rta = await manager.updateProduct(id, prodUp);
+    const user = req.session.user;
+    const rta = await manager.updateProduct(id, prodUp, user);
     if (rta === 0) {
         res.status(200).send({ status: 'Ok', payload: prodUp, mensaje: `Producto con id ${id}, fue modificado.` });
         req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
-    } else {
+    } else { if(rta === 1) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `No se encontro el producto con id ${id} para ser editado.` });
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
-    };
+    } else {
+        res.status(400).send({ status: 'Not Ok', payload: [], error: `El usuario premium logueado no es owner del producto a actualizar.` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+    }};
 });
 
-router.delete('/:id', handlePolicies('admin'), async (req, res) => {
+router.delete('/:id', handlePolicies(['admin','premium']), async (req, res) => {
     const socketServer = req.app.get('socketServer');
     const id = req.params.id;
-    const rta = await manager.deleteProduct(id);
-    res.status(200).send({ status: 'Ok', payload: [], mensaje: `Producto con id ${id}, fue borrado.` });
-    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
-    const prodRender = await manager.getProducts(0);
-    socketServer.emit('deleteProduct', prodRender);
+    const user = req.session.user;
+    const rta = await manager.deleteProduct(id, user);
+    if (rta === 0) {
+        res.status(400).send({ status: 'Not Ok', payload: [], error: `El id del producto a eliminar no existe.` });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+    } else { if(rta === 1) {
+            res.status(200).send({ status: 'Ok', payload: [], mensaje: `El usuario admin elimino el producto con id ${id} con exito.` });
+            req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+            const prodRender = await manager.getProducts(0);
+            socketServer.emit('deleteProduct', prodRender);
+        } else {
+            if(rta === 2) {
+                res.status(200).send({ status: 'Ok', payload: [], mensaje: `El usuario premium elimino su producto con id ${id} con exito.` });
+                req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+                const prodRender = await manager.getProducts(0);
+                socketServer.emit('deleteProduct', prodRender);
+            } else {
+                res.status(400).send({ status: 'Not Ok', payload: [], error: `El usuario premium logueado no es owner del producto a actualizar.` });
+                req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+            }
+    }};
 });
 
 router.all('*', async (req, res) => {

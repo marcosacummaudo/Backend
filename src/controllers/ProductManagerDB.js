@@ -6,11 +6,12 @@ class ProductManager {
     constructor() {
     }
 
-    async addProduct(prodAdd) {
+    async addProduct(prodAdd, user) {
         try {
             if (!prodAdd.title || !prodAdd.description || !prodAdd.price || !prodAdd.code || !prodAdd.stock || !prodAdd.category) {
                 return 0;
             } else {
+                prodAdd.owner = user.email
                 const products = await service.getOne( { code: prodAdd.code } );
                 if (products) {
                     return 1;
@@ -94,9 +95,19 @@ class ProductManager {
         }
     }
 
-    async updateProduct(id, prodU) {
+    async updateProduct(id, prodU, user) {
         try {
-            const product = await service.update(id, prodU);
+            const prodVerif = await service.getOne( { _id: id } );
+            let product = undefined
+            if(user.role === 'admin') {
+                product = await service.update(id, prodU);
+            } else {
+                if(user.role === 'premium' && prodVerif.owner === user.email) {
+                    product = await service.update(id, prodU);
+                } else {
+                    return 2;
+                }
+            }
             if (product) {
                 return 0;
             } else {
@@ -108,10 +119,24 @@ class ProductManager {
         }
     }
 
-    async deleteProduct(id) {
+    async deleteProduct(id, user) {
         try {
-            const product = await service.delete( { _id: id } );
-            return product
+            const prodVerif = await service.getOne( { _id: id } );
+            let product = undefined
+            if(prodVerif === null) {
+                return 0;
+            }
+            if(user.role === 'admin') {
+                product = await service.delete( { _id: id } );
+                return 1;
+            } else {
+                if(user.role === 'premium' && prodVerif.owner === user.email) {
+                    product = await service.delete( { _id: id } );
+                    return 2;
+                } else {
+                    return 3;
+                }
+            }
         } catch (error) {
             console.log('Error al intentar borrar el producto por su id.');
             console.log(error);

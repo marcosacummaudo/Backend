@@ -19,6 +19,8 @@ import cors from 'cors';
 import MongoSingleton from './services/mongo.singleton.js';
 import addLogger from './services/logger.js';
 import errorsHandler from './services/errors.handler.js';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
 
 const app = express();
 
@@ -53,6 +55,22 @@ app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter);
 
 app.use('/static', express.static(`${config.DIRNAME}/public`));
+
+// Generamos objeto base config Swagger y levantamos
+// endpoint para servir la documentación
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación sistema AdoptMe',
+            description: 'Esta documentación cubre toda la API habilitada para AdoptMe',
+        },
+    },
+    apis: ['./src/docs/**/*.yaml'], // todos los archivos de configuración de rutas estarán aquí
+};
+const specs = swaggerJsdoc(swaggerOptions);
+app.use('/api/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+
 
 app.use(errorsHandler);
 

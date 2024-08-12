@@ -32,26 +32,34 @@ class CartManager {
         }
     }
 
-    async addToCart(cid, pid) {
+    async addToCart(cid, pid, user) {
         try {
             const cart = await service.getOne({ _id: cid });
             if (!cart) {
-                return 0 //No exite el carrito
+                return 0; //No exite el carrito.
             } else {
-                const prodManager = new ProductManager();
-                const prod = await prodManager.getOneProduct({ _id: pid });
-                if (!prod) {
-                    return 1 //No existe el producto
+                if(!String(cart._id) === String(user.cart)) {
+                    return 1; //El carrito no es el del usuario.
                 } else {
-                    const prodIndex = cart.products.findIndex(prod => String(prod._id._id) === String(pid));
-                    if (prodIndex === -1) {
-                        const prodAdd = { _id: pid, quantity: 1}
-                        cart.products.push(prodAdd);
+                    const prodManager = new ProductManager();
+                    const prod = await prodManager.getOneProduct({ _id: pid });
+                    if (!prod) {
+                        return 2; //No existe el producto.
                     } else {
-                        cart.products[prodIndex].quantity++
+                        if(prod.owner === user.email) {
+                            return 3; //El usuario es owner del producto.
+                        } else {
+                            const prodIndex = cart.products.findIndex(prod => String(prod._id._id) === String(pid));
+                            if (prodIndex === -1) {
+                                const prodAdd = { _id: pid, quantity: 1}
+                                cart.products.push(prodAdd);
+                            } else {
+                                cart.products[prodIndex].quantity++
+                            }
+                            const cartUpdate = await service.update(cid, cart);
+                            return 4; //Se agrego el producto al carrito
+                        }
                     }
-                    const cartUpdate = await service.update(cid, cart);
-                    return 2; //Se agrego el producto al carrito
                 }
             }
         } catch (error) {

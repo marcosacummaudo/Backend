@@ -83,26 +83,37 @@ router.get('/:cid', async (req, res) => {
     }
 });
 
-router.post('/:cid/product/:pid', handlePolicies('user', 'self'), async (req, res) => {
+router.post('/:cid/product/:pid', handlePolicies(['user','premium','self']), async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
-    const rta = await manager.addToCart(cid,pid);
+    const user = req.session.user;
+    const rta = await manager.addToCart( cid, pid, user );
     if (rta === 0) {
         res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito con id ${cid} no existe` });
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     } else {
         if (rta === 1) {
-            res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe` });
+            res.status(400).send({ status: 'Not Ok', payload: [], error: `El carrito no es el del usuario` });
             req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
         } else {
-            res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se agrego el producto con id ${pid} al carrito con id ${cid} OK` });
-            req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+            if(rta ===2) {
+                res.status(400).send({ status: 'Not Ok', payload: [], error: `El producto con id ${pid} no existe` });
+                req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+            } else {
+                if(rta === 3) {
+                    res.status(400).send({ status: 'Not Ok', payload: [], error: `El user es owner del producto con id ${pid}` });
+                    req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+                } else {
+                    res.status(200).send({ status: 'Ok', payload: [], mensaje: `Se agrego el producto con id ${pid} al carrito con id ${cid} OK` });
+                    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+                }
+            }
         }
     };
 });
 
 
-router.delete('/:cid/product/:pid',  handlePolicies('user', 'self'), async (req, res) => {
+router.delete('/:cid/product/:pid',  handlePolicies(['user','self']), async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
     const rta = await manager.deleteToCart(cid,pid);
@@ -174,7 +185,7 @@ router.delete('/:cid', async (req, res) => {
 });
 
 // Ruta para cerrar el ticket:
-router.post('/:cid/purchase', handlePolicies('user'), async (req, res) => {
+router.post('/:cid/purchase', handlePolicies(['user']), async (req, res) => {
     const cid = req.params.cid;
     const cart = await manager.getCartById(cid);
     if(cart) {

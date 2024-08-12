@@ -1,15 +1,11 @@
 import { Router } from "express";
 import ProductManager from '../controllers/ProductManagerDB.js';
 import CartManager from '../controllers/CartManagerDB.js';
-//import { handlePolicies } from '../utils.js';
 import config from '../config.js';
 import { handlePolicies, generateFakeProducts, verifyToken } from '../utils.js';
 import UsersManagerDB from '../controllers/UsersManagerDB.js';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
-
-
-//import { createHash, isValidPassword, createToken, verifyToken, verifyRequiredBody } from '../utils.js';
 
 const router = Router();
 
@@ -39,7 +35,7 @@ router.get('/', async (req, res) => {
     res.render('home', products);
 });
 
-router.get('/realTimeProducts', async (req, res) => {
+router.get('/realTimeProducts', handlePolicies(['admin','premium']), async (req, res) => {
     const limit = +req.query.limit || 10;
     const prodRender = { prodRender: await manager.getProducts(limit) };
     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);

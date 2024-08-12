@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
     stock: { type: Number, require: true },
     category: { type: String, enum: ['f11', 'f5', 'futsal'], default: 'f11', require: true },
     status: { type: Boolean,  default: true, require: true },
+    owner: { type: String, default: 'admin', require: true },
     thumbnail: { type: Array, require: false }
 });
 

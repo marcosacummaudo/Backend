@@ -1,7 +1,7 @@
 import { Router } from "express";
 import UsersManagerDB from '../controllers/UsersManagerDB.js';
 import config from '../config.js';
-import { createHash, isValidPassword, createToken, verifyToken, verifyRequiredBody } from '../utils.js';
+import { createHash, isValidPassword, createToken, verifyToken, verifyRequiredBody, handlePolicies } from '../utils.js';
 import nodemailer from 'nodemailer';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
@@ -95,7 +95,7 @@ router.post('/insertNewPass/', verifyToken, verifyRequiredBody(['email', 'passwo
                 res.status(400).send({ origin: config.SERVER, payload: 'La password no puede ser igual a la anterior.' });
                 req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
             } else {
-                const process = await manager.update({ foundUser, password: createHash(password)});
+                const process = await manager.updatePass({ foundUser, password: createHash(password)});
                 res.status(200).send({ origin: config.SERVER, payload: process });
                 req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
             }
@@ -109,5 +109,34 @@ router.post('/insertNewPass/', verifyToken, verifyRequiredBody(['email', 'passwo
     }
 });
 
+
+router.put('/premium/:uid', handlePolicies(['admin']), async (req, res) => {
+    try {
+        const uid = req.params.uid;
+        const foundUser = await manager.getUserById( uid );
+        if (foundUser) {
+            if(foundUser.role === 'admin') {
+                res.status(400).send({ origin: config.SERVER, payload: 'El id de usurio corresponde a un usuario admin' });
+                req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+            } else {
+                if(foundUser.role === 'premium') {
+                    const process = await manager.updateRole({ foundUser, role: 'user'});
+                    res.status(200).send({ origin: config.SERVER, payload: process });
+                    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+                } else {
+                    const process = await manager.updateRole({ foundUser, role: 'premium'});
+                    res.status(200).send({ origin: config.SERVER, payload: process });
+                    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+                }
+            }
+        } else {
+            res.status(400).send({ origin: config.SERVER, payload: 'El id enviado no corresponde a un usuario registrado' });
+            req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+        }
+    } catch (err) {
+        res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    }
+});
 
 export default router;

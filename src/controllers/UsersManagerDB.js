@@ -57,7 +57,7 @@ class UsersManager {
         }
     }
 
-    async update(user) {
+    async updatePass(user) {
         try {
             const foundUser = await service.getOne({ _id: user.foundUser._id });
             if (!foundUser) {
@@ -66,6 +66,22 @@ class UsersManager {
                 foundUser.password = user.password;
                 const userUpdate = await service.update(user.foundUser._id, foundUser);
                 return; //Se actualizo la password del usuario
+            }
+        } catch (error) {
+            console.log('Error al actualizar la password de un usuario.');
+            console.log(error);
+        }
+    }
+
+    async updateRole(user) {
+        try {
+            const foundUser = await service.getOne({ _id: user.foundUser._id });
+            if (!foundUser) {
+                return 0 //No exite el usuario
+            } else {
+                foundUser.role = user.role;
+                const userUpdate = await service.update(user.foundUser._id, foundUser);
+                return userUpdate; //Se actualizo el role del usuario
             }
         } catch (error) {
             console.log('Error al actualizar la password de un usuario.');

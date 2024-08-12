@@ -60,3 +60,18 @@ error: date: Sun Aug 11 2024 01:48:15 | method: GET | ip: ::1 | url: /api/sessio
 error: date: Sun Aug 11 2024 02:45:47 | method: POST | ip: ::1 | url: /api/users/insertNewPass
 error: date: Sun Aug 11 2024 02:48:31 | method: POST | ip: ::1 | url: /api/users/insertNewPass
 error: date: Sun Aug 11 2024 02:48:47 | method: POST | ip: ::1 | url: /api/users/insertNewPass
+error: date: Sun Aug 11 2024 04:51:40 | method: PUT | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 04:53:26 | method: PUT | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:06:41 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:21:13 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:22:39 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:25:50 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:28:07 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:30:35 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9113349eb45eae9fa911e | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:40:39 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9556268eb475f186187bd | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:40:47 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9556268eb475f186187bd | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:42:35 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9556268eb475f186187bd | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:54:08 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9556268eb475f186187bd | user: marcosacummaudo@gmail.com
+error: date: Sun Aug 11 2024 09:57:40 | method: DELETE | ip: ::ffff:127.0.0.1 | url: /api/products/66b9556268eb475f186187bd | user: marcosacummaudo@gmail.com
+error: date: Mon Aug 12 2024 02:50:43 | method: POST | ip: ::ffff:127.0.0.1 | url: /api/carts/667c8bd29722c2b90ace7b19/product/66b95f862e0e40261679c7d1 | user: marcosacummaudo@gmail.com
+error: date: Mon Aug 12 2024 02:51:14 | method: POST | ip: ::ffff:127.0.0.1 | url: /api/carts/667c8bd29722c2b90ace7b19/product/66b95f862e0e40261679c7d1 | user: marcosacummaudo@gmail.com
