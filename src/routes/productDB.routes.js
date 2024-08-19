@@ -58,9 +58,20 @@ router.post('/', handlePolicies(['admin','premium']), verifyRequiredBody(['title
     const prodAdd = req.body;
     const user = req.session.user;
     const rta = await manager.addProduct(prodAdd, user);
-    res.status(200).send({ status: 'Ok', payload: rta, mensaje: `Producto con código ${rta.code}, agregado OK` });
-    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
-    socketServer.emit('newProduct', rta);
+
+    if(rta===0) {
+        res.status(400).send({ status: 'Not Ok', payload: [], error: 'Alguno de los campos no llego correctamente.' });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    } else {
+        if(rta===1) {
+            res.status(400).send({ status: 'Not Ok', payload: [], error: 'El valor del campo code ya existe y no se puede repetir.' });
+            req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);    
+        } else {
+            res.status(200).send({ status: 'Ok', payload: rta, mensaje: `Producto con código ${rta.code}, agregado OK` });
+            req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+            socketServer.emit('newProduct', rta);
+        }
+    }
 });
 
 router.put('/:id', handlePolicies(['admin','premium']), async (req, res) => {

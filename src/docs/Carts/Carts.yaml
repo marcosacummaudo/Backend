@@ -1,0 +1,219 @@
+servers:
+  - url: /api/carts
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectid
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                format: objectid
+              quantity:
+                type: integer
+                format: int32
+    ProductInCart:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectid
+        quantity:
+          type: integer
+          format: int32
+    PurchaseResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductInCart'
+        mensaje:
+          type: string
+  parameters:
+    CartIdParam:
+      name: cid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: objectid
+    ProductIdParam:
+      name: pid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: objectid
+  responses:
+    CartNotFound:
+      description: Cart not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              error:
+                type: string
+    ProductNotFound:
+      description: Product not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              error:
+                type: string
+paths:
+  /:
+    post:
+      tags:
+      - Carts
+      summary: Create a new cart
+      responses:
+        '200':
+          description: Cart created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  mensaje:
+                    type: string
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Cart'
+        '400':
+          description: Cart creation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  error:
+                    type: string
+  /{cid}:
+    get:
+      tags:
+      - Carts
+      summary: Get a cart by ID
+      parameters:
+        - $ref: '#/components/parameters/CartIdParam'
+      responses:
+        '200':
+          description: Cart retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          $ref: '#/components/responses/CartNotFound'
+    put:
+      tags:
+      - Carts
+      summary: Update the products in a cart
+      parameters:
+        - $ref: '#/components/parameters/CartIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductInCart'
+      responses:
+        '200':
+          description: Cart updated successfully
+        '400':
+          $ref: '#/components/responses/CartNotFound'
+    delete:
+      tags:
+      - Carts
+      summary: Delete all products from a cart
+      parameters:
+        - $ref: '#/components/parameters/CartIdParam'
+      responses:
+        '200':
+          description: Cart emptied successfully
+        '400':
+          $ref: '#/components/responses/CartNotFound'
+  /{cid}/product/{pid}:
+    post:
+      tags:
+      - Carts
+      summary: Add a product to a cart
+      parameters:
+        - $ref: '#/components/parameters/CartIdParam'
+        - $ref: '#/components/parameters/ProductIdParam'
+      responses:
+        '200':
+          description: Product added to cart successfully
+        '400':
+          $ref: '#/components/responses/CartNotFound'
+    delete:
+      tags:
+      - Carts
+      summary: Remove a product from a cart
+      parameters:
+        - $ref: '#/components/parameters/CartIdParam'
+        - $ref: '#/components/parameters/ProductIdParam'
+      responses:
+        '200':
+          description: Product removed from cart successfully
+        '400':
+          $ref: '#/components/responses/CartNotFound'
+    put:
+      tags:
+      - Carts
+      summary: Update the quantity of a product in a cart
+      parameters:
+        - $ref: '#/components/parameters/CartIdParam'
+        - $ref: '#/components/parameters/ProductIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  format: int32
+      responses:
+        '200':
+          description: Product quantity updated successfully
+        '400':
+          $ref: '#/components/responses/CartNotFound'
+  /{cid}/purchase:
+    post:
+      tags:
+      - Carts
+      summary: Close the cart and process the purchase
+      parameters:
+        - $ref: '#/components/parameters/CartIdParam'
+      responses:
+        '200':
+          description: Purchase processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseResponse'
+        '400':
+          $ref: '#/components/responses/CartNotFound'

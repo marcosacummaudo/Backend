@@ -62,8 +62,8 @@ const swaggerOptions = {
     definition: {
         openapi: '3.0.1',
         info: {
-            title: 'Documentación sistema AdoptMe',
-            description: 'Esta documentación cubre toda la API habilitada para AdoptMe',
+            title: 'Documentación sistema GOAT.',
+            description: 'Esta documentación cubre los endpoints de User, Products y Carts de la API.',
         },
     },
     apis: ['./src/docs/**/*.yaml'], // todos los archivos de configuración de rutas estarán aquí

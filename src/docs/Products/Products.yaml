@@ -1,16 +1,10 @@
-openapi: 3.0.1
-info:
-  title: Product API
-  description: API for managing products in the database
-  version: 1.0.0
 servers:
   - url: http://localhost:3000/api/products
-    description: Local server
-
 paths:
-/api/products:
-  /:
+  /api/products:
     get:
+      tags:
+      - Products
       summary: Get a list of products
       parameters:
         - in: query
@@ -49,6 +43,7 @@ paths:
                     type: array
                     items:
                       type: object
+                      $ref: "#/components/schemas/Product"
         '400':
           description: Bad request, no products found
           content:
@@ -61,8 +56,10 @@ paths:
                   payload:
                     type: array
 
-  /{id}:
+  /api/products/{id}:
     get:
+      tags:
+      - Products
       summary: Get a specific product by ID
       parameters:
         - in: path
@@ -96,7 +93,47 @@ paths:
                   error:
                     type: string
 
+    post:
+      tags:
+      - Products
+      summary: Add a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                code:
+                  type: string
+                stock:
+                  type: integer
+                category:
+                  type: string
+      responses:
+        '200':
+          description: Product added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  payload:
+                    type: object
+                  mensaje:
+                    type: string
+
     put:
+      tags:
+      - Products
       summary: Update a specific product by ID
       parameters:
         - in: path
@@ -152,6 +189,8 @@ paths:
                     type: string
 
     delete:
+      tags:
+      - Products
       summary: Delete a specific product by ID
       parameters:
         - in: path
@@ -185,39 +224,37 @@ paths:
                   error:
                     type: string
 
-  /:
-    post:
-      summary: Add a new product
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                price:
-                  type: number
-                code:
-                  type: string
-                stock:
-                  type: integer
-                category:
-                  type: string
-      responses:
-        '200':
-          description: Product added successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  payload:
-                    type: object
-                  mensaje:
-                    type: string
+components:
+  schemas:
+    Product:
+      required:
+        - title
+        - description
+        - price
+        - code
+        - stock
+        - category
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: Number
+        code:
+          type: string
+        stock:
+          type: Number
+        category:
+          type: string
+          enum:
+            - f11
+            - f5
+            - futsal
+        status:
+          type: string
+        owner:
+          type: string
+        thumbnail:
+          type: Array
