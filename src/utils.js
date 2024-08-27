@@ -30,7 +30,6 @@ export const verifyRequiredBody = (requiredFields) => {
             req.body.hasOwnProperty(field) && req.body[field] !== '' && req.body[field] !== null && req.body[field] !== undefined
         );
         if (!allOk) throw new CustomError(errorsDictionary.FEW_PARAMETERS);
-  
       next();
     };
 };

@@ -28,7 +28,8 @@ router.post('/register', async (req, res) => {
     
 });
 
-router.post('/login', verifyRequiredBody(['email', 'password']), async (req, res) => {
+//router.post('/login', verifyRequiredBody(['email', 'password']), async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await manager.getUserByEmail(email);
@@ -111,7 +112,7 @@ router.get('/current', async (req, res) => {
     if(req.session.user) {
         const userFiltered = await manager.UsersDTO(req.session.user);
         res.status(200).send({ status: 'Ok', payload: userFiltered });
-        req.logger.fatal(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
+        req.logger.fatal(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
         res.status(400).send({ status: 'Not Ok', payload: [] });
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);

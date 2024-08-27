@@ -6,9 +6,6 @@ import nodemailer from 'nodemailer';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
 
-
-//import { isValidPassword, verifyRequiredBody, createToken, verifyToken, handlePolicies } from '../services/utils.js';
-
 const router = Router();
 
 const routeUrl = '/api/users'

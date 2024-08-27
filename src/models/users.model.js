@@ -3,7 +3,8 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 mongoose.pluralize(null);
 
-const collection = 'users';
+//const collection = 'users';
+const collection = 'adoptme_users';
 
 const schema = new mongoose.Schema({
     firstName: { type: String, required: true },

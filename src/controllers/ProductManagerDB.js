@@ -90,7 +90,7 @@ class ProductManager {
                 return products;
             }
         } catch (error) {
-            console.log('Error al buscar el producto por su id.');
+            console.log('Error al buscar el producto con el filtro.');
             console.log(error);
         }
     }
