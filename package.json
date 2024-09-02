@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --env-file .env.dev --watch src/app",
-    "prod": "node --env-file .env.prod --watch src/app"
+    "prod": "node --env-file .env.prod --watch src/app",
+    "start": "node src/app"
   },
   "keywords": [],
   "author": "",

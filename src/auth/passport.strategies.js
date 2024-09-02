@@ -15,9 +15,11 @@ const initAuthStrategies = () => {
         async (req, username, password, done) => {
             try {
                 const foundUser = await manager.getUserByEmail(username);
-
                 if (foundUser && isValidPassword(password, foundUser.password)) {
                     const { password, ...filteredFoundUser } = foundUser;
+
+                    await manager.updateLastConnection(foundUser); //Agregado para guardar la ultima fecha y hora de login
+
                     return done(null, filteredFoundUser);
                 } else {
                     return done(null, false);
@@ -62,6 +64,8 @@ const initAuthStrategies = () => {
                             password: 'none' // No lo dejamos vacío porque en el modelo está requerido
                         }
                         const process = await manager.addUser(user);
+
+                        await manager.updateLastConnection(user); //Agregado para guardar la ultima fecha y hora de login
 
                         return done(null, process);
                     } else {

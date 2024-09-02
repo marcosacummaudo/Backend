@@ -89,6 +89,22 @@ class UsersManager {
         }
     }
 
+    async updateLastConnection(user) {
+        try {
+            const foundUser = await service.getOne({ _id: user.foundUser._id });
+            if (!foundUser) {
+                return 0 //No exite el usuario
+            } else {
+                foundUser.last_connection = new Date();
+                const userUpdate = await service.update(user.foundUser._id, foundUser);
+                return userUpdate; //Se actualizo el last_connection del usuario
+            }
+        } catch (error) {
+            console.log('Error al actualizar la ultima fecha y hora de login del usuario.');
+            console.log(error);
+        }
+    }
+
     async UsersDTO(user) {
         const { password, ...filteredFoundUser } = user;
         return filteredFoundUser;

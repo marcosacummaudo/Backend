@@ -3,8 +3,8 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 mongoose.pluralize(null);
 
-//const collection = 'users';
-const collection = 'adoptme_users';
+const collection = 'users';
+//const collection = 'adoptme_users';
 
 const schema = new mongoose.Schema({
     firstName: { type: String, required: true },
@@ -13,7 +13,9 @@ const schema = new mongoose.Schema({
     age: { type: Number, required: true },
     password: { type: String, required: true },
     cart: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'carts' },
-    role: { type: String, enum: ['admin', 'premium', 'user'], default: 'user' }
+    role: { type: String, enum: ['admin', 'premium', 'user'], default: 'user' },
+    documents: { type: [ { name: String, reference: String } ], default: [] },
+    last_connection: { type: Date, default: null }
 });
 
 schema.plugin(mongoosePaginate);

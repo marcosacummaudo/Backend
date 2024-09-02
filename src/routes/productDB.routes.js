@@ -4,6 +4,7 @@ import config from '../config.js';
 import { handlePolicies, verifyRequiredBody } from '../utils.js';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
+import { uploader } from '../uploader.js';
 
 const router = Router();
 
@@ -51,7 +52,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', handlePolicies(['admin','premium']), verifyRequiredBody(['title', 'description', 'price', 'code', 'stock', 'category']), async (req, res) => {
+router.post('/', uploader.single('thumbnails'), handlePolicies(['admin','premium']), verifyRequiredBody(['title', 'description', 'price', 'code', 'stock', 'category']), async (req, res) => {
     const socketServer = req.app.get('socketServer');
     const prodAdd = req.body;
     const user = req.session.user;

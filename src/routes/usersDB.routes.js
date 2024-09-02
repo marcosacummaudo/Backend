@@ -5,6 +5,7 @@ import { createHash, isValidPassword, createToken, verifyToken, verifyRequiredBo
 import nodemailer from 'nodemailer';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
+import { uploader } from '../uploader.js';
 
 const router = Router();
 
@@ -130,15 +131,51 @@ router.put('/premium/:uid', handlePolicies(['admin']), async (req, res) => {
                     res.status(200).send({ origin: config.SERVER, payload: process });
                     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
                 } else {
-                    const process = await manager.updateRole({ foundUser, role: 'premium'});
-                    res.status(200).send({ origin: config.SERVER, payload: process });
-                    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+                    if (foundUser.documents.length >= 3) {
+                        const process = await manager.updateRole({ foundUser, role: 'premium'});
+                        res.status(200).send({ origin: config.SERVER, payload: process });
+                        req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+                    } else {
+                        res.status(400).send({ origin: config.SERVER, payload: 'El usurio no tiene documentacion cargada para pasar a premium.' });
+                        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+                    }
+
+
                 }
             }
         } else {
             res.status(400).send({ origin: config.SERVER, payload: 'El id enviado no corresponde a un usuario registrado' });
             req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
         }
+    } catch (err) {
+        res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    }
+});
+
+router.post('/:uid/documents', handlePolicies(['admin']), uploader.single('thumbnails'), async (req, res) => {
+    try {
+        // const uid = req.params.uid;
+        // const foundUser = await manager.getUserById( uid );
+        // if (foundUser) {
+        //     if(foundUser.role === 'admin') {
+        //         res.status(400).send({ origin: config.SERVER, payload: 'El id de usurio corresponde a un usuario admin' });
+        //         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+        //     } else {
+        //         if(foundUser.role === 'premium') {
+        //             const process = await manager.updateRole({ foundUser, role: 'user'});
+        //             res.status(200).send({ origin: config.SERVER, payload: process });
+        //             req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+        //         } else {
+        //             const process = await manager.updateRole({ foundUser, role: 'premium'});
+        //             res.status(200).send({ origin: config.SERVER, payload: process });
+        //             req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+        //         }
+        //     }
+        // } else {
+        //     res.status(400).send({ origin: config.SERVER, payload: 'El id enviado no corresponde a un usuario registrado' });
+        //     req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+        // }
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);

@@ -1,7 +1,7 @@
 //import * as url from 'url';
 import path from 'path';
 import { Command } from 'commander';
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 
 const commandLine = new Command();
 commandLine
