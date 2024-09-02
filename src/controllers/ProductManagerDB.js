@@ -1,4 +1,4 @@
-import ProductsService from '../services/Product.dao.mDB.js';
+import ProductsService from '../services/Product.dao.MDB.js';
 
 const service = new ProductsService();
 
