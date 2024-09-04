@@ -57,7 +57,7 @@ function generateImageUrls(count) {
     }
     return imageUrls;
     }
-
+      
 export const generateFakeProducts = async (qty) => {
     const products = [];
     const cat = ['f11', 'f5', 'futsal'];

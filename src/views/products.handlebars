@@ -10,9 +10,13 @@
       <span class="navbar-text">
             {{#if user}}
                 <p><b>Bienvenido, {{user.firstName}} (Rol: {{user.role}})</b></p>
+                <div style="display: flex; gap: 10px;">
+                <a href="/documents"><button class="btn btn-dark">Subir Docs</button></a>
                 <form action="/api/sessions/logout" method="get">
                     <button type="submit" class="btn btn-dark">Salir</button>
                 </form>
+
+                </div>
             {{else}}
                 <p>Usuario no identificado.</p>
                 <a href="/login"><button class="btn btn-dark">Login</button></a>

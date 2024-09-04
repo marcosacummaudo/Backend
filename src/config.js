@@ -19,7 +19,7 @@ const config = {
     //DIRNAME: url.fileURLToPath(new URL('.', import.meta.url)),
     DIRNAME: path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, '$1')), // Win
     // UPLOAD_DIR: 'public/img'
-    get UPLOAD_DIR() { return `${this.DIRNAME}/public/img` },
+    get UPLOAD_DIR() { return `${this.DIRNAME}/public` },
     SECRET: process.env.SECRET,
     MONGODB_URI: process.env.MONGODB_URI,
     MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
@@ -42,13 +42,13 @@ export const errorsDictionary = {
     PAGE_NOT_FOUND: { code: 7, status: 404, message: 'No se encuentra la página solicitada' },
     DATABASE_ERROR: { code: 8, status: 500, message: 'No se puede conectar a la base de datos' },
     INTERNAL_ERROR: { code: 9, status: 500, message: 'Error interno de ejecución del servidor' },
-    RECORD_CREATION_ERROR: { code: 10, status: 500, message: 'Error al intentar crear el registro' },    
+    RECORD_CREATION_ERROR: { code: 10, status: 500, message: 'Error al intentar crear el registro' },
     RECORD_CREATION_OK: { code: 11, status: 200, message: 'Registro creado' },
     USER_ACCESS: { code: 12, status: 403, message: 'No tiene permisos para acceder al recurso' },
     INVALID_LOGIN: { code: 13, status: 401, message: 'Usuario no autenticado' },
     INVALID_ID_PROD: { code: 14, status: 400, message: 'Id de producto no válido' },
     INVALID_ID_CART: { code: 15, status: 400, message: 'Id de carrito no válido' },
-    INVALID_ID_USER: { code: 16, status: 400, message: 'Id de usuario no válido' },
+    INVALID_ID_USER: { code: 16, status: 400, message: 'Id de usuario no válido' }
 }
 
 

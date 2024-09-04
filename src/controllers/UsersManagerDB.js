@@ -91,16 +91,34 @@ class UsersManager {
 
     async updateLastConnection(user) {
         try {
-            const foundUser = await service.getOne({ _id: user.foundUser._id });
+            const foundUser = await service.getOne({ _id: user._id });
             if (!foundUser) {
                 return 0 //No exite el usuario
             } else {
-                foundUser.last_connection = new Date();
-                const userUpdate = await service.update(user.foundUser._id, foundUser);
+                foundUser.last_connection = Date.now();
+                const userUpdate = await service.update(user._id, foundUser);
                 return userUpdate; //Se actualizo el last_connection del usuario
             }
         } catch (error) {
             console.log('Error al actualizar la ultima fecha y hora de login del usuario.');
+            console.log(error);
+        }
+    }
+
+    async insertDocs(user, docs) {
+        try {
+            const foundUser = await service.getOne({ _id: user._id });
+            if (!foundUser) {
+                return 0 //No exite el usuario
+            } else {
+                for (let i = 0; i < docs.length; i++) {
+                    foundUser.documents.push(docs[i])
+                }
+                const userUpdate = await service.update(user._id, foundUser);
+                return userUpdate; //Se actualizo el last_connection del usuario
+            }
+        } catch (error) {
+            console.log('Error al actualizar el array de documentos del usuario.');
             console.log(error);
         }
     }

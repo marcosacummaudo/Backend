@@ -50,6 +50,13 @@ router.get('/products', async (req, res) => {
     res.render('products', { user: req.session.user , prodRender: prodRender });
 });
 
+router.get('/documents',  handlePolicies(['admin','premium','user']), async (req, res) => {
+    //const uid = req.params.uid;
+    //const docRender = { docRender: await manager.getProducts(limit, page) };
+    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    res.render('documents', { user: req.session.user });
+});
+
 router.get('/carts/:cid', async (req, res) => {
     const cid = req.params.cid;
     const cartRender = { cartRender: await managerCart.getCartById(cid) };

@@ -317,3 +317,10 @@ error: date: Mon Aug 26 2024 09:48:09 | method: POST | ip: ::1 | url: /api/sessi
 error: date: Mon Aug 26 2024 09:48:09 | method: POST | ip: ::1 | url: /api/sessions/login
 error: date: Mon Aug 26 2024 09:49:18 | method: POST | ip: ::1 | url: /api/sessions/login
 error: date: Mon Aug 26 2024 09:49:18 | method: POST | ip: ::1 | url: /api/sessions/login
+error: date: Wed Sep 04 2024 02:31:19 | method: POST | ip: ::1 | url: /api/carts/6657506705b4d620fa3b6729/product/66566e0a1f6cce211e3b35ae
+error: date: Wed Sep 04 2024 06:54:17 | method: POST | ip: ::ffff:127.0.0.1 | url: /api/sessions/login
+error: date: Wed Sep 04 2024 06:56:14 | method: POST | ip: ::ffff:127.0.0.1 | url: /api/sessions/login
+error: date: Wed Sep 04 2024 06:56:51 | method: POST | ip: ::ffff:127.0.0.1 | url: /api/sessions/login
+error: date: Wed Sep 04 2024 06:58:02 | method: PUT | ip: ::ffff:127.0.0.1 | url: /api/users/premium/66d8cb2d080c44239559410d
+error: date: Wed Sep 04 2024 06:58:07 | method: PUT | ip: ::ffff:127.0.0.1 | url: /api/users/premium/66d8cb2d080c44239559410d
+error: date: Wed Sep 04 2024 07:05:08 | method: POST | ip: ::ffff:127.0.0.1 | url: /api/sessions/login
