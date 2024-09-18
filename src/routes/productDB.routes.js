@@ -12,6 +12,15 @@ const manager = new ProductManagerDB();
 
 const routeUrl = '/api/products'
 
+const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.GMAIL_APP_USER,
+        pass: config.GMAIL_APP_PASS
+    }
+});
+
 router.param('id', async (req, res, next, id) => {
     try {
         if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
@@ -100,12 +109,43 @@ router.delete('/:id', handlePolicies(['admin','premium']), async (req, res) => {
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else { if(rta === 1) {
             res.status(200).send({ status: 'Ok', payload: [], mensaje: `El usuario admin elimino el producto con id ${id} con exito.` });
+
+            const product = await manager.getOneProduct( { _id: id } );
+            if(product.owner !== 'admin') {
+                const confirmation = await transport.sendMail({
+                    from: `Sistema Coder Marcos <${config.GMAIL_APP_USER}>`,
+                    to: product.owner,
+                    subject: 'Producto eliminado por el admin',
+                    html: `<div">
+                                <div>
+                                    <h2>Producto eliminado</h2>
+                                    <p>Hola, ${product.owner}</p>
+                                    <p>Le escribimos para confirmarle un admin realizo la eliminacion de su producto con id ${id}.</p>
+                                    <p>Saludos y muchas gracias.</p>
+                                </div>
+                            </div>`
+                });
+            }
+
             req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
             const prodRender = await manager.getProducts(0);
             socketServer.emit('deleteProduct', prodRender);
         } else {
             if(rta === 2) {
                 res.status(200).send({ status: 'Ok', payload: [], mensaje: `El usuario premium elimino su producto con id ${id} con exito.` });
+                const confirmation = await transport.sendMail({
+                    from: `Sistema Coder Marcos <${config.GMAIL_APP_USER}>`,
+                    to: user.email,
+                    subject: 'Producto eliminado',
+                    html: `<div">
+                                <div>
+                                    <h2>Producto eliminado</h2>
+                                    <p>Hola, ${user.firstName}</p>
+                                    <p>Le escribimos para confirmarle que realizo la eliminacion del producto con id ${id} con exito.</p>
+                                    <p>Saludos y muchas gracias.</p>
+                                </div>
+                            </div>`
+                });
                 req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
                 const prodRender = await manager.getProducts(0);
                 socketServer.emit('deleteProduct', prodRender);
