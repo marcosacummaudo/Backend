@@ -57,17 +57,33 @@
 
 </script>
 
-
-<div>
-    <h1> Sistema de Chat Websocket </h1>
-    <h3 id="userName"> </h3>
-    <div>
-        <input type="text" id="chat" name="chat" placeholder="Ingresar mensaje" style="width: 300px;">
-        <br>
-        <button id="sendButton">Enviar</button>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><h1 class="text-center"><img src="static/img/LogoGOAT.png" alt="Logo" width="60" height="60"><b> GOAT </b></h1></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      </ul>
+      <span class="navbar-text">
+            <a href="/products"><button class="btn btn-dark">Volver</button></a>
+      </span>
     </div>
+  </div>
+</nav>
+<div class="container">
     <div>
-        <p id="chatList"></p>
+        <h1> Sistema de Chat Websocket </h1>
+        <h3 id="userName"> </h3>
+        <div>
+            <input type="text" id="chat" name="chat" placeholder="Ingresar mensaje" style="width: 300px;">
+            <br>
+            <button id="sendButton">Enviar</button>
+        </div>
+        <div>
+            <p id="chatList"></p>
+        </div>
     </div>
 </div>
 

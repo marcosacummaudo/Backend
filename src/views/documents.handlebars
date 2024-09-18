@@ -28,11 +28,6 @@
 
 <div class="container">
         <h2>Subir archivos</h2>
-        <form action="/api/users/{{user._id}}/documents" method="POST" enctype="multipart/form-data">
-            <input type="file" name="productImages" multiple>
-            <br /><br />
-            <button type="submit">Subir imágenes de producto</button>
-        </form>
         <br /><br />
         <form action="/api/users/{{user._id}}/documents" method="POST" enctype="multipart/form-data">
             <input type="file" name="documentImages" multiple>

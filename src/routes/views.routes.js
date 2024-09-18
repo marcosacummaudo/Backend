@@ -46,37 +46,44 @@ router.get('/products', async (req, res) => {
     const page = +req.query.page;
     const limit = +req.query.limit || 10;
     const prodRender = { prodRender: await manager.getProducts(limit, page) };
+    let isAdmin = false;
+    let quantityProdCart = 0;
+    if(req.session.user) {
+        quantityProdCart = await managerCart.getQuantityProdCartById(req.session.user.cart);
+        if(req.session.user.role==='admin') {
+            isAdmin = true;
+        }
+    }
     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
-    res.render('products', { user: req.session.user , prodRender: prodRender });
+    res.render('products', { user: req.session.user , prodRender: prodRender, quantity: quantityProdCart, isAdmin: isAdmin });
 });
 
-router.get('/documents',  handlePolicies(['admin','premium','user']), async (req, res) => {
-    //const uid = req.params.uid;
-    //const docRender = { docRender: await manager.getProducts(limit, page) };
+router.get('/documents', handlePolicies(['admin','premium','user']), async (req, res) => {
     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     res.render('documents', { user: req.session.user });
 });
 
-router.get('/carts/:cid', async (req, res) => {
+router.get('/carts/:cid', handlePolicies(['admin','premium','user']), async (req, res) => {
     const cid = req.params.cid;
     const cartRender = { cartRender: await managerCart.getCartById(cid) };
+    let quantityProdCart = 0;
+    if(req.session.user) {
+        quantityProdCart = await managerCart.getQuantityProdCartById(req.session.user.cart);
+    }
     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
-    res.render('cart', cartRender);
+    res.render('cart', { user: req.session.user, cartRender: cartRender, quantity: quantityProdCart });
 });
 
-
-router.get('/chat', handlePolicies('user'), (req, res) => {    
+router.get('/chat', handlePolicies('admin','user'), (req, res) => {    
     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     res.render('chat', {});    
 });
-
 
 router.get('/register', (req, res) => {
     res.render('register', {});
 });
 
 router.get('/resetPass', (req, res) => {
-    //res.render('resetPass', {});
     res.render('resetPass', { notToken: false });
 });
 
@@ -86,7 +93,6 @@ router.get('/insertPass/:token', verifyToken, async (req, res) => {
         res.render('insertPass', { user: foundUser });
     }     
 });
-
 
 router.get('/login', (req, res) => {
     if (req.session.user) return res.redirect('/products');
@@ -108,19 +114,20 @@ router.get('/mockingproducts', async (req, res) => {
     res.status(200).send({ status: 'OK', payload: data });
 });
 
-
 router.get('/loggerTest', async (req, res) => {
-
-    // req.logger.fatal(`date: ${new Date().toDateString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user.email}`);
     req.logger.fatal(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user}`);
     req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user}`);
     req.logger.warning(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user}`);
     req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user}`);
     req.logger.http(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user}`);
     req.logger.debug(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url} | user: ${req.user}`);
-
     res.status(200).send({ status: 'OK', payload: '' });
 });
 
+router.get('/users', handlePolicies(['admin']), async (req, res) => {
+    const usersRender = { usersRender: await managerUser.getAllUsers() };
+    req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    res.render('users', { user: req.session.user, usersRender: usersRender });
+});
 
 export default router;

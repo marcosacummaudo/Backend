@@ -142,19 +142,18 @@ class CartManager {
         }
     }
 
-    async punchaseCart(cart) {
+    async punchaseCart(cart, user) {
         try {
             let totalTicket = 0;
             let cartUpdate = [];
             for (let i = 0; i < cart.products.length; i++) {
                 if (cart.products[i]._id.stock >= cart.products[i].quantity) {
-                    console.log('Si alcanza', cart.products[i]);
-                    totalTicket =+ (cart.products[i].quantity * cart.products[i]._id.price);
+                    totalTicket += (cart.products[i].quantity * cart.products[i]._id.price);
                     const prodManager = new ProductManager();
                     const cantNewStock = cart.products[i]._id.stock - cart.products[i].quantity
-                    const prodEdit = await prodManager.updateProduct(cart.products[i]._id._id, { stock: cantNewStock });
+                    const prodEdit = await prodManager.updateProduct(cart.products[i]._id._id, { stock: cantNewStock }, user);
                     cartUpdate = cart.products.splice(i, 1);
-                    i--; // Reduce el i para reajustarlo al haber quetado un elemento.
+                    i--; // Reduce el i para reajustarlo al haber quedado un elemento.
                 } else {
                     console.log('No alcanza');
                 }
@@ -163,21 +162,29 @@ class CartManager {
                 const ticket = {
                     code: uuidv4(),
                     amount: totalTicket,
-                    purchaser: ''
+                    purchaser: user.email
                 };
-                // Hago este if porque como no puedo hacer funcionar correctamente el req.sessions.user, evito que de error.
-                if (req.sessions.user) {
-                    ticket.purchaser = req.sessions.user.email;
-                } else {
-                    ticket.purchaser = 'marcosacummaudo@gmail.com';
-                }
-                const ticketAdded = await service.addTicket(ticket);       
+                const ticketAdded = await service.addTicket(ticket);
             }
             const cartResult = await service.update(cart._id, cart);
             return cartResult;
             
         } catch (error) {
             console.log('Error al borrar los productos del carrito.');
+            console.log(error);
+        }
+    }
+
+    async getQuantityProdCartById(cid) {
+        try {
+            const cart = await service.getOne({ _id: cid });
+            let quantity = 0;
+            for (let i = 0; i < cart.products.length; i++) {
+                quantity = quantity + cart.products[i].quantity
+            }
+            return quantity;
+        } catch (error) {
+            console.log('Error al buscar la cantidad de productos de un carrito por su id.');
             console.log(error);
         }
     }

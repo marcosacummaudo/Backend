@@ -1,0 +1,157 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><h1 class="text-center"><img src="static/img/LogoGOAT.png" alt="Logo" width="60" height="60"><b> GOAT </b></h1></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      </ul>
+      <span class="navbar-text">
+            {{#if user}}
+                <p><b>Bienvenido, {{user.firstName}} (Rol: {{user.role}})</b></p>
+                <div style="display: flex; gap: 10px;">
+                    <a href="/products"><button class="btn btn-dark">Volver</button></a>
+                    <form action="/api/sessions/logout" method="get">
+                        <button type="submit" class="btn btn-dark">Salir</button>
+                    </form>
+                </div>
+            {{else}}
+                <p>Usuario no identificado.</p>
+                <a href="/login"><button class="btn btn-dark">Login</button></a>
+            {{/if}}
+      </span>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+    <div>
+        <h2>Limpiar usuarios con mas de 20 dias de inactividad:</h2>
+        <button class="btn btn-primary add-to-cart" onclick="deleteUsers()">Borrar Usuarios Inactivos</button>
+    </div>
+    <h2>Lista de Usuarios:</h2>
+    <div class="row">
+        {{#each usersRender.usersRender}}
+            <div id="cardProd" class="col-sm-6 col-md-6 col-lg-4 mb-4">
+                <div class="card" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.lastName}}, {{this.firstName}}</h5>
+                        <p class="card-text">Email: {{this.email}}</p>
+                        <p class="card-text">Rol: {{this.role}}</p>
+                        <p class="card-text">Ultima Conexion: {{this.last_connection}}</p>
+                        <button class="btn btn-primary add-to-cart" onclick="changeRole('{{this._id}}')">Cambiar Rol</button>
+                        <button class="btn btn-primary add-to-cart" onclick="deleteUser('{{this._id}}')">Borrar</button>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+<script> 
+    const deleteUsers = async () => {
+        try {
+            const process = await fetch(`/api/users`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+                const result = await process.json();
+                if (process.ok) {
+                    Swal.fire({
+                        title: 'Se eliminaron los usuarios con exito.',
+                        text: result.mensaje,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Recargar la página
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'No se pudo eliminar los usuarios.',
+                        text: result.error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar los usuarios inactivos.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+    }
+
+    const changeRole = async (uid) => {
+        try {
+            const process = await fetch(`/api/users/premium/${uid}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+                const result = await process.json();
+                if (process.ok) {
+                    Swal.fire({
+                        title: 'El Rol del usuario fue modificado.',
+                        text: result.mensaje,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Recargar la página
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'No se pudo modificar el rol. Falta documentación.',
+                        text: result.error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al modificar el rol del usuario.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+    }
+    
+    const deleteUser = async (uid) => {
+        try {
+            const process = await fetch(`/api/users/${uid}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+                const result = await process.json();
+                if (process.ok) {
+                    Swal.fire({
+                        title: 'El usuario fue eliminado.',
+                        text: result.mensaje,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Recargar la página
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'No se pudo eliminar el usuario.',
+                        text: result.error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar el usuario.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>

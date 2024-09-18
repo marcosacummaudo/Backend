@@ -12,6 +12,14 @@ class UsersService {
         };
     };
 
+    getAll = async () => {
+        try {
+            return await usersModel.find().select('firstName lastName email role last_connection').lean();
+        } catch (err) {
+            return err.message;
+        };
+    };
+
     add = async (newData) => {
         try {
             return await usersModel.create(newData);
@@ -23,6 +31,14 @@ class UsersService {
     update = async (id, user) => {
         try {
             return await usersModel.findOneAndUpdate( { _id: id }, user, { new: true } );
+        } catch (err) {
+            return err.message;
+        };
+    };
+
+    delete = async (id) => {
+        try {
+            return await usersModel.findOneAndDelete( { _id: id } );
         } catch (err) {
             return err.message;
         };

@@ -99,10 +99,10 @@ class ProductManager {
         try {
             const prodVerif = await service.getOne( { _id: id } );
             let product = undefined
-            if(user.role === 'admin') {
+            if(user.role === 'admin' || user.role === 'user') {
                 product = await service.update(id, prodU);
             } else {
-                if(user.role === 'premium' && prodVerif.owner === user.email) {
+                if(user.role === 'premium' && prodVerif.owner !== user.email) {
                     product = await service.update(id, prodU);
                 } else {
                     return 2;

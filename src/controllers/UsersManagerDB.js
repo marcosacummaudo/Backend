@@ -57,6 +57,30 @@ class UsersManager {
         }
     }
 
+    async getAllUsers() {
+        try {
+            const users = await service.getAll();
+            return users;
+        } catch (error) {
+            console.log('Error al buscar todos los usuarios.');
+            console.log(error);
+        }
+    }
+
+    async deleteUser(user) {
+        try {
+            const foundUser = await service.delete({ _id: user._id });
+            if (!foundUser) {
+                return 0 //No exite el usuario
+            } else {
+                return foundUser; //Se actualizo la password del usuario
+            }
+        } catch (error) {
+            console.log('Error al borrar el usuario.');
+            console.log(error);
+        }
+    }
+
     async updatePass(user) {
         try {
             const foundUser = await service.getOne({ _id: user.foundUser._id });

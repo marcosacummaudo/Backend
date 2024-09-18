@@ -33,7 +33,6 @@ router.param('uid', async (req, res, next, id) => {
     }
 });
 
-
 router.post('/', verifyRequiredBody(['firstName', 'lastName', 'email', 'age', 'password']), async (req, res) => {
 
     try {
@@ -91,7 +90,6 @@ router.post('/resetpass', verifyRequiredBody(['email']), async (req, res) => {
     }
 });
 
-
 router.post('/insertNewPass/', verifyToken, verifyRequiredBody(['email', 'password']), async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -115,7 +113,6 @@ router.post('/insertNewPass/', verifyToken, verifyRequiredBody(['email', 'passwo
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     }
 });
-
 
 router.put('/premium/:uid', handlePolicies(['admin']), async (req, res) => {
     try {
@@ -161,6 +158,85 @@ router.post('/:uid/documents', uploader.array('documentImages', 3), async (req, 
         }
         const foundUser = await manager.insertDocs( user, docs );
         res.status(200).send({ status: 'OK', payload: 'Docs subidos', files: req.files, user: foundUser });
+    } catch (err) {
+        res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    }
+});
+
+router.get('/', async (req, res) => {
+    try {
+        const foundUsers = await manager.getAllUsers();
+        res.status(200).send({ status: 'OK', payload: foundUsers });
+    } catch (err) {
+        res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    }
+});
+
+router.delete('/', async (req, res) => {
+    try {
+        const foundUsers = await manager.getAllUsers();
+        let deletedUsers = []
+        for (let i = 0; i < foundUsers.length; i++) {
+            const diferenciaMilisegundos = new Date() - foundUsers[i].last_connection;
+            const diferenciaDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+            if(diferenciaDias>20) { //Diferencia de 20 dias
+                const delUsers = await manager.deleteUser(foundUsers[i]);
+                if (delUsers) {
+                    const confirmation = await transport.sendMail({
+                        from: `Sistema Coder Marcos <${config.GMAIL_APP_USER}>`,
+                        to: delUsers.email,
+                        subject: 'Usuario Eliminado',
+                        html: `<div">
+                                    <div>
+                                        <h2>Eliminacion de usuario por tiempo de inactividad</h2>
+                                        <p>Hola,</p>
+                                        <p>Le informamos que su usaurio fue eliminado por excesivo tiempo de inactividad.</p>
+                                        <p>Si lo desea, puede volver a registrar en nuestro sitio presionando el boton debajo.</p>
+                                        <p>
+                                            <a href="http://localhost:8080/register" class="button">Visitar nuestro sitio</a>
+                                        </p>
+                                        <p>Muchas gracias.</p>
+                                    </div>
+                                </div>`
+                    });
+                    deletedUsers.push( foundUsers[i] )
+                }
+            }
+        }
+        res.status(200).send({ status: 'OK', payload: deletedUsers });
+    } catch (err) {
+        res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+        req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+    }
+});
+
+router.delete('/:uid', async (req, res) => {
+    try {
+        const uid = req.params.uid;
+        const foundUser = await manager.getUserById(uid);
+        if(foundUser) {
+            const delUsers = await manager.deleteUser(foundUser);
+            const confirmation = await transport.sendMail({
+                from: `Sistema Coder Marcos <${config.GMAIL_APP_USER}>`,
+                to: delUsers.email,
+                subject: 'Usuario Eliminado',
+                html: `<div">
+                            <div>
+                                <h2>Eliminacion de usuario.</h2>
+                                <p>Hola,</p>
+                                <p>Le informamos que su usaurio fue eliminado por un administrador del sistema.</p>
+                                <p>Disculpe las molestias ocacionadas.</p>
+                                <p>Saludos y muchas gracias.</p>
+                            </div>
+                        </div>`
+            });
+            res.status(200).send({ status: 'OK', payload: delUsers });
+        } else {
+            res.status(400).send({ origin: config.SERVER, payload: 'El id enviado no corresponde a un usuario registrado' });
+            req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
+        }
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);

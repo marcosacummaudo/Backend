@@ -5,10 +5,13 @@ import nodemailer from 'nodemailer';
 import { handlePolicies } from '../utils.js';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
+import UsersService from '../services/Users.dao.MDB.js';
 
 const router = Router();
 
 const manager = new CartManager();
+
+const service = new UsersService();
 
 const routeUrl = '/api/carts'
 
@@ -59,7 +62,6 @@ router.get('/mail', async (req, res) => {
     }
 });
     
-
 router.post('/', async (req, res) => {
     const rta = await manager.newCart();
     if (rta) {
@@ -112,7 +114,6 @@ router.post('/:cid/product/:pid', handlePolicies(['user','premium','self']), asy
     };
 });
 
-
 router.delete('/:cid/product/:pid',  handlePolicies(['user','self']), async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
@@ -131,8 +132,6 @@ router.delete('/:cid/product/:pid',  handlePolicies(['user','self']), async (req
     };
 });
 
-
-
 router.put('/:cid', async (req, res) => {
     const cid = req.params.cid;
     const prodUp = req.body;
@@ -145,7 +144,6 @@ router.put('/:cid', async (req, res) => {
         req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     };
 });
-
 
 router.put('/:cid/product/:pid', async (req, res) => {
     const cid = req.params.cid;
@@ -185,11 +183,25 @@ router.delete('/:cid', async (req, res) => {
 });
 
 // Ruta para cerrar el ticket:
-router.post('/:cid/purchase', handlePolicies(['user']), async (req, res) => {
+router.post('/:cid/purchase', handlePolicies(['user','premium']), async (req, res) => {
     const cid = req.params.cid;
     const cart = await manager.getCartById(cid);
+    const foundUser = await service.getOne({ cart: cid });
     if(cart) {
-        const cartFiltered = await manager.punchaseCart(cart);
+        const cartFiltered = await manager.punchaseCart(cart, foundUser);
+        const confirmation = await transport.sendMail({
+            from: `Sistema Coder Marcos <${config.GMAIL_APP_USER}>`,
+            to: foundUser.email,
+            subject: 'Compra confirmada',
+            html:   `<div">
+                        <div>
+                            <h2>Le agradecemos por su compra.</h2>
+                            <p>Hola,</p>
+                            <p>Le enviamos este mail para confirmarle su compra.</p>
+                            <p>Muchas gracias.</p>
+                        </div>
+                    </div>`
+        });
         res.status(200).send({ status: 'Ok', payload: cartFiltered, mensaje: `Se cerro correctamente el carrito con id ${cid} OK` });
         req.logger.info(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     } else {
@@ -197,7 +209,6 @@ router.post('/:cid/purchase', handlePolicies(['user']), async (req, res) => {
         req.logger.error(`date: ${new Date().toDateString()} ${new Date().toLocaleTimeString()} | method: ${req.method} | ip: ${req.ip} | url: ${routeUrl}${req.url}`);
     }
 });
-
 
 router.all('*', async (req, res) => {
     res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada' });
