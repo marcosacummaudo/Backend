@@ -5,6 +5,7 @@ import { handlePolicies, verifyRequiredBody } from '../utils.js';
 import CustomError from "../services/CustomError.class.js";
 import { errorsDictionary } from "../config.js";
 import { uploader } from '../uploader.js';
+import nodemailer from 'nodemailer';
 
 const router = Router();
 
